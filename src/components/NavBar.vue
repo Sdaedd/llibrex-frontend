@@ -1,8 +1,9 @@
 <template>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div >
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <a class="navbar-item" href="https://bulma.io">
-            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+          <a class="navbar-item" href="/">
+            <img src="../assets/logo2.png" width="112" height="28">
           </a>
       
           <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -14,7 +15,7 @@
       
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-start">
-            <a class="navbar-item">
+            <a class="navbar-item" href="/">
               Home
             </a>
       
@@ -28,7 +29,7 @@
               </a>
       
               <div class="navbar-dropdown">
-                <a class="navbar-item">
+                <a class="navbar-item" href="/about/">
                   About
                 </a>
                 <a class="navbar-item">
@@ -51,7 +52,7 @@
                 <a class="button is-primary">
                   <strong>Sign up</strong>
                 </a>
-                <a class="button is-light">
+                <a class="button is-white is-outlined">
                   Log in
                 </a>
               </div>
@@ -59,4 +60,5 @@
           </div>
         </div>
       </nav>
+  </div>
 </template>

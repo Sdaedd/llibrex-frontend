@@ -1,7 +1,11 @@
 <template>
   <div class="home">
     <NavBar/>
+    <div class="container" style="padding: 15px;">
+    <p class="title is-4 has-text-light">Tus libros</p>
+    <hr>
     <CardLibro/>
+  </div>
   </div>
 </template>
 
