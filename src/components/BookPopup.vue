@@ -1,0 +1,145 @@
+<template>
+    <div class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-card has-text-white">
+            <header class="modal-card-head has-background-black-ter">
+                <p class="modal-card-title has-text-light">{{ book.title }}</p>
+                <button class="delete" aria-label="close" @click="$emit('closePopup')"></button>
+            </header>
+            <section class="modal-card-body has-background-grey-dark">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-128x128">
+                            <img :src="book.image" alt="Book Cover">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <div class="content">
+                            <div class="columns">
+                                <div class="column">
+                                    <p><strong class="has-text-grey-light title is-5">Autor/es:</strong> {{ book.authors.join(', ') }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Editorial:</strong> {{ book.publisher }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Género:</strong> {{ book.categories.slice(0, 3).join(', ') }}</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong class="has-text-grey-light title is-5">ISBN:</strong> {{ book.isbn }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Páginas:</strong> {{ book.pageCount === 0 ? 'Desconocido' : book.pageCount }}
+                                    </p>
+                                    <p><strong class="has-text-grey-light title is-5">Valoración:</strong> {{ book.rating }}</p>
+                                </div>
+                            </div>
+                            <p><strong class="has-text-grey-light  title is-4">Progreso:</strong></p>
+                            <div class="level-item has-text-centered">
+                                <progress class="progress is-small is-dark" value="20" max="100">20%</progress>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <div class="container is-fluid">
+                    <p><strong class="has-text-grey-light title is-3">Sinopsis:</strong></p>
+
+                    <div v-if="showFullDescription">
+                        <p>{{ book.description }}</p>
+                        <button class="button is-small is-light is-outlined is-focused" @click="showFullDescription = false">Mostrar menos</button>
+                    </div>
+                    <div v-else-if="hasTruncatedDescription">
+                        <p>{{ truncatedDescription }}</p>
+                        <button v-if="this.book.description.length > 450" class="button is-medium is-light is-outlined"
+                            @click="showFullDescription = true">Mostrar más</button>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot has-background-black-ter">
+                <!-- Footer content if needed -->
+            </footer>
+        </div>
+    </div>
+</template>
+  
+  
+<script>
+export default {
+    props: {
+        book: {
+            type: Object,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            showFullDescription: false,
+        };
+    },
+    computed: {
+        hasTruncatedDescription() {
+            return this.book.description && this.book.description.length;
+        },
+        truncatedDescription() {
+            if (this.hasTruncatedDescription && this.book.description.length > 450) {
+                return this.book.description.slice(0, 650) + "...";
+            }
+            return this.book.description;
+        },
+    },
+};
+</script>
+  
+<style scoped>
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-background {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-card {
+    width: 80%;
+    height: 80%;
+    max-width: 1000px;
+    max-height: 700px;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+.modal-card-head {
+    background-color: #f5f5f5;
+}
+
+.modal-card-title {
+    flex-grow: 1;
+    color: #363636;
+}
+
+.modal-card-body {
+    padding: 1.5rem;
+    font-size: large;
+}
+
+.modal-card-footer {
+    background-color: #f5f5f5;
+}
+
+.button {
+    margin-top: 0.5rem;
+}
+
+.delete {
+    opacity: 0.7;
+}
+
+.delete:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .modal-card {
+        width: 95%;
+        height: 95%;
+    }
+}
+
+</style>
