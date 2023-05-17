@@ -1,4 +1,5 @@
 <template>
+  <div class="wrapper">
   <div class="login-container">
     <h2 class="title">Iniciar sesión</h2>
     <form @submit.prevent="submitForm">
@@ -30,6 +31,7 @@
       <p class="notification is-danger">{{ error }}</p>
     </div>    
   </div>
+</div>
 </template>
 
 <script>
@@ -93,17 +95,27 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Asegura que el contenedor ocupe el 100% de la altura de la pantalla */
+}
 .login-container {
-  max-width: 400px;
+  max-width: 500px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 60px 20px;
   background-color: #363636;
   color: #fff;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .title {
   color: #fff;
+  text-align: center; /* Centra el título horizontalmente */
+  margin-bottom: 20px; /* Agrega espacio inferior */
 }
 
 .field label.label {
@@ -127,5 +139,25 @@ export default {
 
 .buttons.is-centered {
   padding-top: 8px;
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+}
+
+/* Estilos para hacer el formulario responsive */
+@media (max-width: 600px) {
+  .wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  .login-container {
+    padding:5px;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 24px;
+  }
 }
 </style>

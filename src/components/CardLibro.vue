@@ -3,12 +3,12 @@
     <div class="column is-one-fifth" v-for="libro in libros" :key="libro.id">
       <div class="card has-background-black-ter has-text-white">
         <div class="card-image">
-          <figure class="image is-4by3" @click="showBookPopup(libro)">
+          <figure class="image is-4by3" @click="showBookPopup(libro, libro.capituloActual)">
             <img :src="libro.image" alt="Imagen de {{libro.titulo}}" class="image">
             <div class="image-overlay"></div>
           </figure>
-          <progress class="progress is-small is-dark" :value="Math.random() * 100" max="100">20%</progress>
-        </div>
+          
+          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="libro.pageCount">{{ libro.capituloActual }}%</progress>        </div>
         <div class="card-content container">
           <div class="content title is-6 has-text-light">
             <p v-if="!libro.showAll">
@@ -46,34 +46,35 @@ export default {
   },
   methods: {
     getLibros() {
-      const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
+
+  axios
+    .get(`http://localhost:3000/usuarios/${userId}/libros`)
+    .then(response => {
+      const progresoLibros = response.data;
+      const libroIds = progresoLibros.map(libro => libro.libro);
 
       axios
-        .get(`http://localhost:3000/usuarios/${userId}/libros`)
+        .get('http://localhost:3000/libros')
         .then(response => {
-          console.log(response)
-          const progresoLibros = response.data;
-          const libroIds = progresoLibros.map(libro => libro.libro);
-
-          axios
-            .get('http://localhost:3000/libros')
-            .then(response => {
-              this.libros = response.data.filter(libro => libroIds.includes(libro._id));
-              this.libros = this.libros.map(libro => ({
-                ...libro,
-                showAll: false
-              }));
-            })
-            .catch(error => {
-              console.log(error);
-            });
+          this.libros = response.data.filter(libro => libroIds.includes(libro._id));
+          this.libros = this.libros.map(libro => ({
+            ...libro,
+            showAll: false,
+            capituloActual: progresoLibros.find(progreso => progreso.libro === libro._id)?.capituloActual || 0
+          }));
         })
         .catch(error => {
           console.log(error);
         });
-    },
-    showBookPopup(libro) {
-      this.$emit('bookSelected', libro);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+},
+
+    showBookPopup(libro, capituloActual) {
+      this.$emit('bookSelected', libro, capituloActual);
     },
   }
 }
@@ -103,4 +104,5 @@ export default {
   height: 100%;
   background: linear-gradient(to top, hsl(0, 0%, 14%, 100) 1%, rgba(0, 0, 0, 0));
 }
+
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="modal is-active">
-        <div class="modal-background"></div>
+        <div class="modal-background" @click="$emit('closePopup')"></div>
         <div class="modal-card has-text-white">
             <header class="modal-card-head has-background-black-ter">
                 <p class="modal-card-title has-text-light">{{ book.title }}</p>
@@ -17,20 +17,29 @@
                         <div class="content">
                             <div class="columns">
                                 <div class="column">
-                                    <p><strong class="has-text-grey-light title is-5">Autor/es:</strong> {{ book.authors.join(', ') }}</p>
-                                    <p><strong class="has-text-grey-light title is-5">Editorial:</strong> {{ book.publisher }}</p>
-                                    <p><strong class="has-text-grey-light title is-5">Género:</strong> {{ book.categories.slice(0, 3).join(', ') }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Autor/es:</strong> {{
+                                        book.authors.join(', ') }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Editorial:</strong> {{ book.publisher
+                                    }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Género:</strong> {{
+                                        book.categories.slice(0, 3).join(', ') }}</p>
                                 </div>
                                 <div class="column">
                                     <p><strong class="has-text-grey-light title is-5">ISBN:</strong> {{ book.isbn }}</p>
-                                    <p><strong class="has-text-grey-light title is-5">Páginas:</strong> {{ book.pageCount === 0 ? 'Desconocido' : book.pageCount }}
+                                    <p><strong class="has-text-grey-light title is-5">Páginas:</strong> {{ book.pageCount
+                                        === 0 ? 'Desconocido' : book.pageCount }}
                                     </p>
-                                    <p><strong class="has-text-grey-light title is-5">Valoración:</strong> {{ book.rating }}</p>
+                                    <p><strong class="has-text-grey-light title is-5">Valoración:</strong> {{ book.rating }}
+                                    </p>
                                 </div>
                             </div>
-                            <p><strong class="has-text-grey-light  title is-4">Progreso:</strong></p>
-                            <div class="level-item has-text-centered">
-                                <progress class="progress is-small is-dark" value="20" max="100">20%</progress>
+                            <p><strong class="has-text-grey-light title is-4">Progreso:</strong></p>
+                            <div class="level-item has-text-centered progress-wrapper">
+                                <progress class="progress show-value is-large is-dark" :value="pagina"
+                                    :max="book.pageCount"></progress>
+                                <p class="progress-value has-text-grey">{{ progressPercentage }}%</p>
+                            </div>
+                            <div class="progress-wrapper">
                             </div>
                             <br>
                         </div>
@@ -41,7 +50,8 @@
 
                     <div v-if="showFullDescription">
                         <p>{{ book.description }}</p>
-                        <button class="button is-small is-light is-outlined is-focused" @click="showFullDescription = false">Mostrar menos</button>
+                        <button class="button is-small is-light is-outlined is-focused"
+                            @click="showFullDescription = false">Mostrar menos</button>
                     </div>
                     <div v-else-if="hasTruncatedDescription">
                         <p>{{ truncatedDescription }}</p>
@@ -65,6 +75,10 @@ export default {
             type: Object,
             required: true,
         },
+        pagina: {
+            type: Number,
+            required: true,
+        },
     },
     data() {
         return {
@@ -81,6 +95,12 @@ export default {
             }
             return this.book.description;
         },
+        progressPercentage() {
+            if(this.pagina < this.book.pageCount){
+                return Math.floor((this.pagina / this.book.pageCount) * 100);
+            }
+            return 100;
+        }
     },
 };
 </script>
@@ -142,4 +162,31 @@ export default {
     }
 }
 
-</style>
+.progress-wrapper {
+    position: relative;
+}
+
+.progress-value {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(1rem / 1.5);
+    line-height: 1rem;
+    font-weight: bold;
+}
+
+.progress.is-small+.progress-value {
+    font-size: calc(0.75rem / 1.5);
+    line-height: 0.75rem;
+}
+
+.progress.is-medium+.progress-value {
+    font-size: calc(1.25rem / 1.5);
+    line-height: 1.25rem;
+}
+
+.progress.is-large+.progress-value {
+    font-size: calc(1.5rem / 1.5);
+    line-height: 1.5rem;
+}</style>

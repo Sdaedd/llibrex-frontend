@@ -1,4 +1,5 @@
 <template>
+  <div class="wrapper">
   <div class="login-container">
     <h2 class="title">Registrate</h2>
     <form @submit.prevent="submitForm">
@@ -30,6 +31,7 @@
       <p class="notification is-danger">{{ error }}</p>
     </div>    
   </div>
+</div>
 </template>
 
 <script>
@@ -123,18 +125,27 @@ export default {
 }
 };
 </script>
-<style scoped>
+<style scoped>.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Asegura que el contenedor ocupe el 100% de la altura de la pantalla */
+}
 .login-container {
-  max-width: 400px;
+  max-width: 500px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 60px 20px;
   background-color: #363636;
   color: #fff;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .title {
   color: #48c774;
+  text-align: center; /* Centra el título horizontalmente */
+  margin-bottom: 20px; /* Agrega espacio inferior */
 }
 
 .field label.label {
@@ -152,37 +163,24 @@ export default {
   box-shadow: 0 0 0 0.125em rgba(72, 199, 116, 0.25);
 }
 
-.button.is-white.is-outlined {
-  border-color: #fff;
-  color: #fff;
-}
-
-.button.is-white.is-outlined:hover {
-  background-color: #fff;
-  color: #363636;
-}
-
-.button.is-primary.is-outlined {
-  border-color: #48c774;
-  color: #48c774;
-}
-
-.button.is-primary.is-outlined:hover {
-  background-color: #48c774;
-  color: #fff;
-}
-
-.notification.is-danger {
-  background-color: #f14668;
-  color: #fff;
-}
-
-.notification.is-success {
-  background-color: #48c774;
-  color: #fff;
-}
-
 .buttons.is-centered {
   padding-top: 8px;
+}
+/* Estilos para hacer el formulario responsive */
+@media (max-width: 600px) {
+  .wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  .login-container {
+    padding:5px;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 24px;
+  }
 }
 </style>

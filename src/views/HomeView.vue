@@ -1,5 +1,5 @@
 <template>
-  <NavBar/>
+  <NavBar />
   <div class="home">
     <div class="container" style="padding: 15px;">
       <p class="title is-4 has-text-light">Tus libros</p>
@@ -9,7 +9,7 @@
       <hr>
       <UploadLibro />
     </div>
-    <BookPopup :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" />
+    <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" />
   </div>
 </template>
 
@@ -31,11 +31,13 @@ export default {
   data() {
     return {
       selectedBook: null,
+      capituloActual: null,
     }
   },
   methods: {
-    showBookPopup(book) {
+    showBookPopup(book, pagina) {
       this.selectedBook = book;
+      this.capituloActual = parseInt(pagina);
     },
   }
 }
