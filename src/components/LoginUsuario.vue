@@ -1,19 +1,34 @@
 <template>
-  <div>
-    <h2>Iniciar sesión</h2>
+  <div class="login-container">
+    <h2 class="title">Iniciar sesión</h2>
     <form @submit.prevent="submitForm">
-      <div>
-        <label for="nombre">Nombre de usuario:</label>
-        <input type="text" id="nombre" v-model="nombre" required>
+      <div class="field">
+        <label class="label" for="nombre">Nombre de usuario:</label>
+        <div class="control">
+          <input class="input" type="text" id="nombre" v-model="nombre" required>
+        </div>
       </div>
-      <div>
-        <label for="contraseña">Contraseña:</label>
-        <input type="password" id="contraseña" v-model="contraseña" required>
+      <div class="field">
+        <label class="label" for="contraseña">Contraseña:</label>
+        <div class="control">
+          <input class="input" type="password" id="contraseña" v-model="contraseña" required>
+        </div>
       </div>
-      <button type="submit">Iniciar sesión</button>
+      <div class="field">
+        <div class="control">
+          <div class="buttons is-centered">
+            <button class="button is-white is-outlined" type="submit">Iniciar sesión</button>
+            <a class="button is-primary is-outlined" href="/register">
+              <strong>Registrarse</strong>
+            </a>
+          </div>
+        </div>
+      </div>
     </form>
-    <p v-if="error" class="error-message">{{ error }}</p>
-    <p v-if="success" class="success-message">Inicio de sesión exitoso.</p>
+    <div v-if="error">
+      <br/>
+      <p class="notification is-danger">{{ error }}</p>
+    </div>    
   </div>
 </template>
 
@@ -26,13 +41,11 @@ export default {
       nombre: '',
       contraseña: '',
       error: '',
-      success: false
     };
   },
   methods: {
     submitForm() {
       this.error = '';
-      this.success = false;
 
       // Validar el formulario antes de enviar la solicitud al backend
       if (!this.nombre || !this.contraseña) {
@@ -52,11 +65,15 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        .then(() => {
+        .then((res) => {
           // Manejar la respuesta exitosa del servidor
-          this.success = true;
+          localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('userId', res.data.userId);
           this.nombre = '';
           this.contraseña = '';
+
+          // Redireccionar a la página principal
+          this.$router.push('/');
         })
         .catch(error => {
           // Manejar errores de la solicitud al servidor
@@ -76,11 +93,39 @@ export default {
 </script>
 
 <style scoped>
-.error-message {
-  color: red;
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #363636;
+  color: #fff;
+  border-radius: 5px;
 }
 
-.success-message {
-  color: green;
+.title {
+  color: #fff;
+}
+
+.field label.label {
+  color: #fff;
+}
+
+.field .input {
+  background-color: #5a5a5a;
+  color: #fff;
+}
+
+.notification.is-danger {
+  background-color: #f14668;
+  color: #fff;
+}
+
+.notification.is-success {
+  background-color: #48c774;
+  color: #fff;
+}
+
+.buttons.is-centered {
+  padding-top: 8px;
 }
 </style>

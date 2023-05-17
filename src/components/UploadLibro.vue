@@ -52,7 +52,7 @@ export default {
       }
     },
     searchOnGoogleBooks(searchId) {
-      const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg";
+      const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg"; // Reemplaza con tu clave de API de Google Books
       const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchId}&key=${apiKey}`;
       console.log(searchUrl)
       axios
@@ -98,15 +98,27 @@ export default {
         formData.append("categories", this.bookData.categories);
         formData.append("isbn", this.bookData.isbn);
 
-        const response = await axios.post("http://localhost:3000/libros", formData, {
+        const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
+
+        const response = await axios.post(`http://localhost:3000/libros`, formData, {
           headers: {
-            "Content-Type": "multipart/form-data", // Set the correct content type for FormData
+            "Content-Type": "multipart/form-data", // Establece el tipo de contenido correcto para FormData
           },
         });
-        console.log("Book saved successfully:", response.data);
+
+        const libroId = response.data._id; // Obtén el ID del libro guardado
+
+        const progresoLibrosData = {
+          libro: libroId,
+          capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
+        };
+
+        await axios.post(`http://localhost:3000/usuarios/${userId}/libros`, progresoLibrosData);
+
+        console.log("Libro guardado correctamente:", response.data);
         router.go();
       } catch (error) {
-        console.error("Error saving book:", error);
+        console.error("Error al guardar el libro:", error);
       }
     },
   },

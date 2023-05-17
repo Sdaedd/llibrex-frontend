@@ -46,13 +46,27 @@ export default {
   },
   methods: {
     getLibros() {
+      const userId = localStorage.getItem('userId');
+
       axios
-        .get('http://localhost:3000/libros')
+        .get(`http://localhost:3000/usuarios/${userId}/libros`)
         .then(response => {
-          this.libros = response.data.map(libro => ({
-            ...libro,
-            showAll: false
-          }));
+          console.log(response)
+          const progresoLibros = response.data;
+          const libroIds = progresoLibros.map(libro => libro.libro);
+
+          axios
+            .get('http://localhost:3000/libros')
+            .then(response => {
+              this.libros = response.data.filter(libro => libroIds.includes(libro._id));
+              this.libros = this.libros.map(libro => ({
+                ...libro,
+                showAll: false
+              }));
+            })
+            .catch(error => {
+              console.log(error);
+            });
         })
         .catch(error => {
           console.log(error);

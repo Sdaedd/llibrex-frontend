@@ -1,5 +1,9 @@
 # llibrex-frontend
 
+# Usuario de prueba:
+User: test
+Password: test
+
 ## Project setup
 ```
 npm install

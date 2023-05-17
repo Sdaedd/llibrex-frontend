@@ -10,7 +10,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: { requiresAuth: true } // Agregar meta información para protección de ruta
     },
     {
       path: '/register',
@@ -29,5 +30,16 @@ const router = createRouter({
     },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // El usuario no está autenticado y la ruta requiere autenticación, redirigir a la página de login
+    next('/login');
+  } else {
+    next();
+  }
+});
 
 export default router
