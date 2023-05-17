@@ -18,6 +18,7 @@
       <button v-if="!bookData" class="button is-black" type="submit" :disabled="!file">
         Subir EPUB
       </button>
+      <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
@@ -32,11 +33,22 @@ export default {
     return {
       file: null,
       bookData: null,
+      allowedExtensions: [".epub"], // Extensiones de archivo permitidas
+      errorMessage: null, // Mensaje de error en caso de archivo no válido
     };
   },
   methods: {
     handleFileUpload(event) {
-      this.file = event.target.files[0];
+      const selectedFile = event.target.files[0];
+      const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+
+      if (this.allowedExtensions.includes(`.${fileExtension}`)) {
+        this.file = selectedFile;
+        this.errorMessage = null; // Limpiar mensaje de error si el archivo es válido
+      } else {
+        this.file = null;
+        this.errorMessage = "Archivo no válido. Por favor, selecciona un archivo EPUB.";
+      }
     },
     async parseEpub() {
       if (this.file) {
@@ -47,46 +59,45 @@ export default {
         if (!searchId.includes("isbn")) {
           searchId = metadata.title;
         }
-        console.log(metadata)
-        this.searchOnGoogleBooks(searchId);
+        console.log(metadata);
+        await this.searchOnGoogleBooks(searchId);
       }
     },
-    searchOnGoogleBooks(searchId) {
-      const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg"; // Reemplaza con tu clave de API de Google Books
-      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchId}&key=${apiKey}`;
-      console.log(searchUrl)
-      axios
-        .get(searchUrl)
-        .then((response) => {
-          if (response.data.items && response.data.items.length > 0) {
-            const data = response.data.items[0];
-            console.log(data);
-            this.bookData = {
-              googleId: data.id,
-              title: data.volumeInfo.title,
-              authors: data.volumeInfo.authors,
-              description: data.volumeInfo.description,
-              image: data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "",
-              publicationDate: data.volumeInfo.publishedDate,
-              pageCount: data.volumeInfo.pageCount,
-              publisher: data.volumeInfo.publisher,
-              categories: data.volumeInfo.categories,
-              isbn: data.volumeInfo.industryIdentifiers[0].identifier,
-              epub: null, // Set it to null initially
-            };
-            this.saveBook()
-          } else {
-            console.log("No se encontraron libros.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error retrieving book data:", error);
-        });
+    async searchOnGoogleBooks(searchId) {
+      try {
+        const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg"; // Reemplaza con tu clave de API de Google Books
+        const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchId}&key=${apiKey}`;
+        console.log(searchUrl);
+        const response = await axios.get(searchUrl);
+
+        if (response.data.items && response.data.items.length > 0) {
+          const data = response.data.items[0];
+          console.log(data);
+          this.bookData = {
+            googleId: data.id,
+            title: data.volumeInfo.title,
+            authors: data.volumeInfo.authors,
+            description: data.volumeInfo.description,
+            image: data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "",
+            publicationDate: data.volumeInfo.publishedDate,
+            pageCount: data.volumeInfo.pageCount,
+            publisher: data.volumeInfo.publisher,
+            categories: data.volumeInfo.categories,
+            isbn: data.volumeInfo.industryIdentifiers[0].identifier,
+            epub: null, // Set it to null initially
+          };
+          await this.saveBook();
+        } else {
+          console.log("No se encontraron libros.");
+        }
+      } catch (error) {
+        console.error("Error retrieving book data:", error);
+      }
     },
     async saveBook() {
       try {
         const formData = new FormData();
-        formData.append("epub", this.file);        // Append the rest of the book data to FormData
+        formData.append("epub", this.file); // Append the rest of the book data to FormData
         formData.append("googleId", this.bookData.googleId);
         formData.append("title", this.bookData.title);
         formData.append("authors", this.bookData.authors);

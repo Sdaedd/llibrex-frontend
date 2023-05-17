@@ -7,7 +7,7 @@
             <img :src="libro.image" :alt="'Imagen de ' + libro.titulo" class="image">
             <div class="image-overlay"></div>
           </figure>
-          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="libro.pageCount">{{ libro.capituloActual }}%</progress>        
+          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="libro.pageCount">{{ libro.capituloActual }}%</progress>
         </div>
         <div class="card-content container">
           <div class="content title is-6 has-text-light">
@@ -116,5 +116,19 @@ export default {
   right: 0;
   height: 100%;
   background: linear-gradient(to top, hsl(0, 0%, 14%, 100) 1%, rgba(0, 0, 0, 0));
+}
+
+.image:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 3px solid white;
+  border-radius: 5px;
+  z-index: 1;
+  filter: blur(10px);
+  cursor: pointer; /* Cambia el cursor al estilo de un link */
 }
 </style>

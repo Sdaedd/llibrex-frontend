@@ -179,13 +179,26 @@
     font-size: calc(1rem / 1.5);
     line-height: 1rem;
     font-weight: bold;
-    text-shadow: 0px 0px 15px black;
+    text-shadow: 0px 0px 25px black;
   }
   
   .description-wrapper {
     margin-top: 1rem;
   }
   
-  /* Otros estilos específicos si es necesario */
+  .progress.is-small+.progress-value {
+    font-size: calc(0.75rem / 1.5);
+    line-height: 0.75rem;
+}
+
+.progress.is-medium+.progress-value {
+    font-size: calc(1.25rem / 1.5);
+    line-height: 1.25rem;
+}
+
+.progress.is-large+.progress-value {
+    font-size: calc(1.5rem / 1.5);
+    line-height: 1.5rem;
+}
   </style>
   
