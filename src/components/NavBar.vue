@@ -23,7 +23,7 @@
               Más
             </a>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown has-background-grey-lighter">
               <a class="navbar-item" href="/about/">
                 About
               </a>
