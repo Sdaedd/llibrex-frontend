@@ -7,13 +7,14 @@
             <img :src="libro.image" :alt="'Imagen de ' + libro.titulo" class="image">
             <div class="image-overlay"></div>
           </figure>
-          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="libro.pageCount">{{ libro.capituloActual }}%</progress>
+          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="libro.pageCount">{{
+            libro.capituloActual }}%</progress>
         </div>
         <div class="card-content container">
           <div class="content title is-6 has-text-light">
             <p v-if="!libro.showAll">
               {{ truncateTitle(libro.title, 42) }}
-              <a v-if="libro.title.length > 38" @click="libro.showAll = true">...</a>
+              <a v-if="libro.title.length > 42" @click="libro.showAll = true">...</a>
             </p>
             <p v-if="libro.showAll">
               {{ truncateTitle(libro.title, 56) }}
@@ -24,26 +25,35 @@
         <div class="card-content">
           <p class="subtitle is-7 has-text-grey">{{ formatAuthors(libro.authors) }}</p>
         </div>
+        <footer class="modal-card-foot has-background-black-ter">
+          <button class="button is-primary is-small" @click="leerLibro(libro)">Leer</button>
+        </footer>
       </div>
     </div>
   </div>
+  <div id="reader"></div>
 </template>
 
 <script>
 import axios from 'axios';
+import { mapMutations } from 'vuex';
 
 export default {
+  emits: ['bookSelected', 'readBook'],
   name: 'CardLibro',
   data() {
     return {
       libros: [],
-      selectedBook: null // propiedad para almacenar el libro seleccionado
+      selectedBook: null, // propiedad para almacenar el libro seleccionado
+      showEpubReader: false,
     }
   },
   mounted() {
     this.getLibros();
   },
   methods: {
+    ...mapMutations(['setSelectedBook']), // Importa la mutación setSelectedBook
+
     getLibros() {
       const userId = localStorage.getItem('userId');
 
@@ -83,7 +93,12 @@ export default {
 
     formatAuthors(authors) {
       return authors[0].replace(',', ' & ');
-    }
+    },
+    leerLibro(libro) {
+      this.setSelectedBook(libro); // Almacena el libro seleccionado en Vuex
+      this.$router.push({ name: 'ReaderView' }); // Redirige a la vista ReaderView
+    },
+
   }
 }
 </script>
@@ -129,6 +144,11 @@ export default {
   border-radius: 5px;
   z-index: 1;
   filter: blur(10px);
-  cursor: pointer; /* Cambia el cursor al estilo de un link */
+  cursor: pointer;
+  /* Cambia el cursor al estilo de un link */
+}
+
+.modal-card-foot {
+  height: 40px;
 }
 </style>

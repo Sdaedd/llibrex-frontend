@@ -4,7 +4,7 @@
     <div class="container" style="padding: 15px;">
       <p class="title is-4 has-text-light">Tus libros</p>
       <hr>
-      <CardLibro @bookSelected="showBookPopup" />
+      <CardLibro @bookSelected="showBookPopup"/>
       <p class="title is-4 has-text-light">Subir libros</p>
       <hr>
       <UploadLibro />
@@ -32,6 +32,7 @@ export default {
     return {
       selectedBook: null,
       capituloActual: null,
+      showEpubReader: false,
     }
   },
   methods: {

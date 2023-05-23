@@ -4,6 +4,7 @@ import router from './router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import store from './store'; 
 
 library.add(faUser)
 
@@ -12,4 +13,7 @@ import 'bulma/css/bulma.css'
 
 const app = createApp(App);
 
-app.use(router).component('font-awesome-icon', FontAwesomeIcon).mount('#app');
+app.use(router)
+app.use(store)
+app.component('font-awesome-icon', FontAwesomeIcon)
+app.mount('#app');

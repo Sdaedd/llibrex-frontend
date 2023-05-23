@@ -9,7 +9,6 @@
   <script>
   // @ is an alias to /src
   import LoginUsuario from '@/components/LoginUsuario.vue'
-  console.log(localStorage.getItem('userId'))
   export default {
     name: 'RegistroView',
     components: {
