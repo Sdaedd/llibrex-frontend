@@ -56,6 +56,7 @@ export default {
         await this.book.ready;
         const metadata = this.book.package.metadata;
         var searchId = metadata.identifier.replace("urn:", "");
+        console.log(metadata)
         if (!searchId.includes("isbn")) {
           searchId = metadata.title;
         }

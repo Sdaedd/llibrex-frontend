@@ -9,6 +9,24 @@
         <span class="book-title">{{ book.title }}</span>
       </div>
       <div class="menu-item">
+        <div class="dropdown is-hoverable">
+          <div class="dropdown-trigger">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span>Capítulos</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content is-scrollable">
+              <a class="dropdown-item" v-for="(chapter, index) in Object.keys(this.chapters)" :key="index"
+                @click="goToChapter(index)">
+                {{ chapter.split('.')[0] }}
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Divider of reader -->
@@ -16,7 +34,7 @@
     <!-- reader -->
     <div id="reader" ref="reader"></div>
     <!-- Progress bar -->
-      <div class="progress-bar">
+    <div class="progress-bar">
       <progress class="progress is-dark is-large" :value="this.currentLocation" :max="this.totalLocations"></progress>
       <div class="page-navigation">
         <button class="button" @click="prevPage"><i class="fas fa-chevron-left"></i></button>
@@ -47,34 +65,58 @@ export default {
     return {
       rendition: null,
       currentLocation: null,
-      totalLocations: null
+      totalLocations: null,
+      epubCfi: null,
+      chapters: [],
     };
-  },
-  watch: {
-    book(newBook) {
-      this.renderBook(newBook);
-    },
   },
   computed: {
     progress() {
-      if (this.totalLocations) {
-        return Math.floor((this.currentLocation / this.totalLocations) * 100);
-      }
-      return 0;
-    }
+      return this.totalLocations ? Math.floor((this.currentLocation / this.totalLocations) * 100) : 0;
+    },
   },
   mounted() {
+    const userId = localStorage.getItem('userId');
+
     if (this.book) {
-      this.renderBook(this.book);
-      window.onbeforeunload = this.destroyRendition; // Handle browser back navigation
-    }else{
+      this.getUserLocation(userId, this.book._id)
+        .then(() => {
+          this.renderBook(this.book);
+          window.onbeforeunload = this.destroyRendition; // Handle browser back navigation
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
       this.$router.push('/');
     }
   },
+
   beforeUnmount() {
     this.destroyRendition();
   },
   methods: {
+    getUserLocation(userId, libroId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`http://localhost:3000/usuarios/${userId}`)
+          .then((response) => {
+            const progresoLibros = response.data.progresoLibros;
+            const libro = progresoLibros.find((progreso) => progreso.libro === libroId);
+            if (libro) {
+              this.epubCfi = libro.epubCfi;
+              resolve(); // Resuelve la promesa si se encuentra el libro
+            } else {
+              console.log(`El libro con ID ${libroId} no fue encontrado en el progreso del usuario.`);
+              reject(`El libro con ID ${libroId} no fue encontrado en el progreso del usuario.`); // Rechaza la promesa si el libro no se encuentra
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            reject(error); // Rechaza la promesa si ocurre un error en la solicitud
+          });
+      });
+    },
     renderBook(libro) {
       if (!libro) {
         return; // Salir del método si libro es nulo
@@ -84,15 +126,14 @@ export default {
         .then((response) => {
           const epubArray = new Uint8Array(response.data.epub);
           const book = Epub(epubArray.buffer);
+
           this.rendition = book.renderTo(this.$refs.reader, {
             method: 'continuous',
             width: '100%',
             height: 'calc(100% - 2em)',
           });
 
-          this.rendition.themes.default({ "p": { "font-size": "large !important"}})
-
-          this.rendition.display();
+          this.rendition.themes.default({ "p": { "font-size": "large !important" } })
 
           // Obtener las ubicaciones del libro
           book.ready.then(() => {
@@ -102,11 +143,22 @@ export default {
           // Actualizar la ubicación actual al cambiar de página
           this.rendition.on('relocated', (location) => {
             this.currentLocation = location.start.index;
-            console.log(this.currentLocation)
+            localStorage.setItem('currentLocation', location.start.cfi);
+            localStorage.setItem('currentProgress', this.progress);
+            this.chapters = this.rendition.book.locations.spine.manifest;
+            
+            console.log(this.chapters)
           });
-
           // Enable navigation using arrow keys
           window.addEventListener('keydown', this.handleKeyDown);
+
+          // Verificar si el CFI es válido antes de mostrarlo
+          if (this.epubCfi == null) {
+            this.rendition.display();
+          } else {
+            this.rendition.display(this.epubCfi);
+          }
+
         })
         .catch((error) => {
           console.log(error);
@@ -129,6 +181,10 @@ export default {
     },
     nextPage() {
       this.rendition.next();
+    },
+    goToChapter(chapter) {
+      const location = chapter;
+      this.rendition.display(location);
     },
     closeWindow() {
       this.destroyRendition();
@@ -203,10 +259,16 @@ export default {
   flex-grow: 1;
   margin: auto;
   margin-right: 10px;
-  width: 70%; 
+  width: 70%;
 }
+
 .progress-percentage {
   margin-left: 5px;
+}
+
+.dropdown-content.is-scrollable {
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .current-page {
@@ -219,7 +281,7 @@ export default {
   display: flex;
   align-items: center;
   margin: 1px;
-  flex-grow: 0; 
+  flex-grow: 0;
 }
 
 .button {

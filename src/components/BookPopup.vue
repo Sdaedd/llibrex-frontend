@@ -29,8 +29,8 @@
                 </div>
                 <p><strong class="has-text-grey-light title is-4">Progreso:</strong></p>
                 <div class="level-item has-text-centered progress-container">
-                  <progress class="progress show-value is-large is-dark" :value="pagina" :max="book.pageCount"></progress>
-                  <p class="progress-value has-text-grey">{{ progressPercentage }}%</p>
+                  <progress class="progress show-value is-large is-dark" :value="book.capituloActual" max="100"></progress>
+                  <p class="progress-value has-text-grey">{{book.capituloActual}}%</p>
                 </div>
                 <div class="description-wrapper">
                   <p><strong class="has-text-grey-light title is-3">Sinopsis:</strong></p>
@@ -81,12 +81,6 @@
         }
         return this.book.description;
       },
-      progressPercentage() {
-        if (this.pagina < this.book.pageCount) {
-          return Math.floor((this.pagina / this.book.pageCount) * 100);
-        }
-        return 100;
-      }
     }
   };
   </script>

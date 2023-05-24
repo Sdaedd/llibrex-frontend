@@ -21,11 +21,6 @@ import EpubReader from '@/components/EpubReader.vue';
     components: {
       EpubReader
     },
-    data() {
-      return {
-        readingBook: null,
-      };
-    },
     computed: {
     ...mapState(['selectedBook']), // Importa el estado selectedBook desde Vuex
     },

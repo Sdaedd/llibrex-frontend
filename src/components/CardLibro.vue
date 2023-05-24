@@ -1,5 +1,6 @@
 <template>
-  <div class="columns is-mobile is-multiline">
+  <div class="columns is-mobile is-multiline is-fullheight">
+
     <div class="column is-one-fifth" v-for="libro in libros" :key="libro.id">
       <div class="card has-background-black-ter has-text-white">
         <div class="card-image">
@@ -7,7 +8,7 @@
             <img :src="libro.image" :alt="'Imagen de ' + libro.titulo" class="image">
             <div class="image-overlay"></div>
           </figure>
-          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="libro.pageCount">{{
+          <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="100">{{
             libro.capituloActual }}%</progress>
         </div>
         <div class="card-content container">
@@ -50,6 +51,10 @@ export default {
   },
   mounted() {
     this.getLibros();
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.getLibros();
+    next();
   },
   methods: {
     ...mapMutations(['setSelectedBook']), // Importa la mutación setSelectedBook
@@ -96,6 +101,7 @@ export default {
     },
     leerLibro(libro) {
       this.setSelectedBook(libro); // Almacena el libro seleccionado en Vuex
+      localStorage.setItem('currentBookId', libro._id);
       this.$router.push({ name: 'ReaderView' }); // Redirige a la vista ReaderView
     },
 
@@ -107,6 +113,8 @@ export default {
 .card {
   position: relative;
   width: 230px;
+  height: 100%;
+  flex-grow: 1;
 }
 
 .content {
