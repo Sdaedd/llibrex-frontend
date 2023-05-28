@@ -2,9 +2,16 @@
   <div v-if="book" class="epub-reader">
     <!-- Top menu -->
     <div class="menu">
+      <div class="menu-item">
       <a class="navbar-item" href="/">
         <img src="../assets/logo.png" width="112" height="28">
       </a>
+      <a class="navbar-item" href="/biblioteca">
+        <span class="icon is-large">
+          <i class="fas fa-book"></i>
+        </span>
+      </a>
+    </div>
       <div class="menu-item">
         <span class="book-title">{{ book.title }}</span>
       </div>
@@ -122,7 +129,7 @@ export default {
         return; // Salir del método si libro es nulo
       }
       axios
-        .get(`http://localhost:3000/libros/descargar/${libro._id}`)
+        .get(`http://localhost:3000/libros/leer/${libro._id}`)
         .then((response) => {
           const epubArray = new Uint8Array(response.data.epub);
           const book = Epub(epubArray.buffer);
@@ -203,7 +210,6 @@ export default {
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
-
 .epub-reader {
   position: fixed;
   top: 0;
@@ -219,7 +225,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-height: 50px;
+  max-height: 65px;
   padding: 10px;
   background-color: #f8f8f8;
   border-bottom: 1px solid #ddd;

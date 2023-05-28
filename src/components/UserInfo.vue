@@ -1,0 +1,128 @@
+<template>
+  <div v-if="success" class="notification is-success user-info">
+    <button class="delete" @click="clearSuccess"></button>
+    Usuario guardado correctamente.
+  </div>
+  <div class="user-info">
+    <div class="field">
+      <label class="label has-text-light">Acceso:</label>
+      <div class="control">
+        <input class="input" type="text" v-model="editedUsuario.acceso" disabled>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label has-text-light">Nombre:</label>
+      <div class="control">
+        <input class="input" type="text" v-model="editedUsuario.nombre" disabled>
+      </div>
+    </div>
+    <div class="field" v-if="editing">
+      <label class="label has-text-light">Contraseña:</label>
+      <div class="control">
+        <input class="input" type="password" v-model="editedUsuario.contraseña" :disabled="!editing">
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <label class="label has-text-light">Funciones:</label>
+        <button class="button is-primary" @click="toggleEditing" v-if="!editing">Editar Contraseña</button>
+        <button class="button is-success" @click="saveChanges" v-if="editing">Guardar</button>
+        <button class="button is-light" @click="cancelEditing" v-if="editing">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <div v-if="error" class="notification is-danger panel">
+    <button class="delete" @click="clearError"></button>
+    {{ error }}
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  props: {
+    usuario: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      editing: false,
+      editedUsuario: null,
+      error: '',
+      success: false,
+    };
+  },
+  created() {
+    this.editedUsuario = { ...this.usuario };
+  },
+  methods: {
+    toggleEditing() {
+      this.editing = true;
+    },
+    async saveChanges() {
+      try {
+        const response = await axios.put(`http://localhost:3000/usuarios/${this.editedUsuario._id}`, this.editedUsuario);
+        const usuarioActualizado = response.data;
+        this.editing = false;
+        this.success = true; // Mostrar notificación de éxito
+        this.$emit('update:usuario', { ...usuarioActualizado });
+      } catch (error) {
+        console.error('Error al guardar los cambios del usuario:', error);
+        // Manejar el error de acuerdo a tus necesidades
+      }
+    },
+    cancelEditing() {
+      this.editing = false;
+      // Restaurar los datos originales del usuario
+      this.editedUsuario = { ...this.usuario };
+    },
+    clearError() {
+      this.error = '';
+    },
+    clearSuccess() {
+      this.success = false;
+    },
+  },
+};
+</script>
+
+<style scoped>
+.user-info {
+  max-width: 520px;
+  margin: 2em auto;
+  border-radius: 20px;
+  border: gray 1px solid;
+  padding: 5px 20px;
+  box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.149);
+}
+
+.user-info::before {
+  filter: blur(20px);
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.has-text-light {
+  color: #fff !important;
+}
+
+.button.is-primary.is-light {
+  margin-left: 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .user-info,
+  .panel {
+    max-width: 100%;
+  }
+}
+</style>

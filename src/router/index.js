@@ -4,6 +4,8 @@ import NotFound from "../components/NotFound.vue";
 import RegistroView from '../views/RegisterView.vue';
 import LoginUsuario from '../views/LoginView.vue';
 import ReaderView from '../views/ReaderView.vue';
+import BibliotecaView from '../views/BibliotecaView.vue';
+import AccountView from '../views/AccountView.vue';
 
 
 const router = createRouter({
@@ -29,6 +31,16 @@ const router = createRouter({
       path: '/reader',
       name: 'ReaderView',
       component: ReaderView
+    },
+    {
+      path: '/biblioteca',
+      name: 'BibliotecaView',
+      component: BibliotecaView
+    },
+    {
+      path: '/cuenta',
+      name: 'AccountView',
+      component: AccountView
     },
     {
       path: "/:pathmatch(.*)*",

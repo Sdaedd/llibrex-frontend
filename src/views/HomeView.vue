@@ -4,41 +4,40 @@
     <div class="container" style="padding: 15px;">
       <p class="title is-4 has-text-light">Tus libros</p>
       <hr>
-      <CardLibro @bookSelected="showBookPopup" />
-      <p class="title is-4 has-text-light">Subir libros</p>
-      <hr>
-      <UploadLibro />
+      <BookSearch @filter="filterBooks" />
+      <ColumnCards :libros="filteredLibros" @bookSelected="showBookPopup" />
     </div>
-    <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" />
+    <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" @libroBorrado="handleLibroBorrado" />  
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import axios from 'axios';
-import CardLibro from '@/components/CardLibro.vue';
-import UploadLibro from '@/components/UploadLibro.vue';
+import ColumnCards from '@/components/ColumnCards.vue';
 import BookPopup from '@/components/BookPopup.vue';
 import NavBar from '@/components/NavBar.vue';
+import BookSearch from '@/components/BookSearch.vue';
 
 export default {
   name: 'HomeView',
   components: {
-    CardLibro,
-    UploadLibro,
+    ColumnCards,
     BookPopup,
-    NavBar
+    NavBar,
+    BookSearch,
   },
   data() {
     return {
       isLoaded: false,
       selectedBook: null,
       capituloActual: null,
-      showEpubReader: false,
-    }
+      libros: [], // todos los libros
+      filteredLibros: [], // libros filtrados
+    };
   },
   computed: {
-    ...mapState(['currentLocation'])
+    ...mapState(['currentLocation']),
   },
   mounted() {
     const currentLocation = localStorage.getItem('currentLocation');
@@ -47,42 +46,86 @@ export default {
 
     if (currentLocation != null || currentBookId != null) {
       this.saveCurrentLocation(currentLocation, currentBookId, currentBookProgress);
-    }else{
+    } else {
       this.isLoaded = true;
     }
+    this.getLibros();
   },
   methods: {
     showBookPopup(book, pagina) {
       this.selectedBook = book;
       this.capituloActual = parseInt(pagina);
     },
-    saveCurrentLocation(currentLocation, currentBookId, currentBookProgress) {
+    handleLibroBorrado() {
+    this.getLibros(); // Vuelve a obtener la lista de libros para refrescarla
+  },
+    getLibros() {
+      const userId = localStorage.getItem('userId');
 
+      axios
+        .get(`http://localhost:3000/usuarios/${userId}/libros`)
+        .then((response) => {
+          const progresoLibros = response.data;
+          const libroIds = progresoLibros.map((libro) => libro.libro);
+
+          axios
+            .get('http://localhost:3000/libros')
+            .then((response) => {
+              this.libros = response.data
+                .filter((libro) => libroIds.includes(libro._id))
+                .map((libro) => ({
+                  ...libro,
+                  showAll: false,
+                  capituloActual: progresoLibros.find((progreso) => progreso.libro === libro._id)?.capituloActual || 0,
+                }));
+              this.filteredLibros = this.libros
+              this.isLoaded = true;
+            })
+            .catch((error) => {
+              console.log(error);
+              this.isLoaded = true;
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+          this.isLoaded = true;
+        });
+    },
+    saveCurrentLocation(currentLocation, currentBookId, currentBookProgress) {
       const userId = localStorage.getItem('userId');
       const libroId = currentBookId;
 
       const url = `http://localhost:3000/usuarios/${userId}/libros/${libroId}`;
       const data = {
         capituloActual: currentBookProgress,
-        epubCfi: currentLocation
+        epubCfi: currentLocation,
       };
 
       axios
         .put(url, data)
-        .then((response) => {
-          // La solicitud se realizó con éxito
+        .then(() => {
           localStorage.removeItem('currentProgress');
           localStorage.removeItem('currentBookId');
-          localStorage.removeItem('currentLocation')
-          console.log(response.data);
-          this.isLoaded = true;
+          localStorage.removeItem('currentLocation');
         })
-        .catch((error) => {
-          // Ocurrió un error al hacer la solicitud
+        .catch(error => {
           console.error(error);
           this.isLoaded = true;
         });
-    }
-  }
-}
+    },
+    filterBooks(searchQuery) {
+      if (searchQuery) {
+        this.filteredLibros = this.libros.filter(libro =>
+          libro.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      } else {
+        this.filteredLibros = this.libros;
+      }
+    },
+    beforeRouteUpdate(to, from, next) {
+      this.getLibros();
+      next();
+    },
+  },
+};
 </script>

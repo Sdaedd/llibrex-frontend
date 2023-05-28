@@ -15,7 +15,7 @@
           </span>
         </label>
       </div>
-      <button v-if="!bookData" class="button is-black" type="submit" :disabled="!file">
+      <button v-if="!bookData" class="button is-black mt-3" type="submit" :disabled="!file">
         Subir EPUB
       </button>
       <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
@@ -87,7 +87,7 @@ export default {
             isbn: data.volumeInfo.industryIdentifiers[0].identifier,
             epub: null, // Set it to null initially
           };
-          await this.saveBook();
+          this.saveBook();
         } else {
           console.log("No se encontraron libros.");
         }
