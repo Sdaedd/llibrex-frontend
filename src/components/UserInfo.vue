@@ -6,20 +6,29 @@
   <div class="user-info">
     <div class="field">
       <label class="label has-text-light">Acceso:</label>
-      <div class="control">
+      <div class="control has-icons-left">
         <input class="input" type="text" v-model="editedUsuario.acceso" disabled>
+        <span class="icon is-small is-left">
+          <i class="fas fa-hammer"></i>
+        </span>
       </div>
     </div>
     <div class="field">
       <label class="label has-text-light">Nombre:</label>
-      <div class="control">
+      <div class="control has-icons-left">
         <input class="input" type="text" v-model="editedUsuario.nombre" disabled>
+        <span class="icon is-small is-left">
+          <i class="fas fa-user"></i>
+        </span>
       </div>
     </div>
     <div class="field" v-if="editing">
       <label class="label has-text-light">Contraseña:</label>
-      <div class="control">
+      <div class="control has-icons-left">
         <input class="input" type="password" v-model="editedUsuario.contraseña" :disabled="!editing">
+        <span class="icon is-small is-left">
+          <i class="fas fa-lock"></i>
+        </span>
       </div>
     </div>
     <div class="field">
@@ -91,11 +100,11 @@ export default {
 
 <style scoped>
 .user-info {
-  max-width: 520px;
+  max-width: 600px;
   margin: 2em auto;
   border-radius: 20px;
   border: gray 1px solid;
-  padding: 5px 20px;
+  padding: 15px;
   box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.149);
 }
 

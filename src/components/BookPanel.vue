@@ -10,7 +10,7 @@
       </p>
     </div>
     <div v-if="filteredLibros.length === 0" class="panel-block">
-      <p>No se encontraron libros.</p>
+      <p class="has-text-white">No se encontraron libros.</p>
     </div>
     <div v-else>
       <div v-for="libro in filteredLibros" :key="libro._id" class="panel-block">
@@ -104,7 +104,7 @@ export default {
 
 <style scoped>
 .panel {
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
   box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.149);
 }

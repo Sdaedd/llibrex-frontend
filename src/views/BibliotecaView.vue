@@ -1,10 +1,11 @@
 <template>
     <NavBar />
-    <div v-if="libros.length > 0" class="container">
+    <div v-if="libros.length > 0" class="container" style="padding: 15px;">
         <!-- Últimos libros leídos -->
         <p class="title is-3 has-text-light">Biblioteca</p>
         <hr />
         <SliderCard :libros="libros" @bookSelected="showBookPopup" />
+        <hr />
         <br />
         <div v-if="librosLeidosRecientemente.length != 0">
             <p class="title is-4 has-text-light">Últimos libros leídos</p>
@@ -13,6 +14,7 @@
 
         <!-- Loop through unique genres -->
         <div v-for="genre in uniqueGenres" :key="genre">
+            <hr />
             <p class="title is-4 has-text-light">{{ genre }}</p>
             <SliderCard :libros="getLibrosByGenre(genre)" @bookSelected="showBookPopup" />
         </div>

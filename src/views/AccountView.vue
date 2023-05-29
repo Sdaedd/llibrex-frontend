@@ -1,15 +1,17 @@
 <template>
   <div>
     <NavBar />
-    <div v-if="usuario && libros">
+    <div v-if="usuario && libros" >
       <div v-if="usuario.acceso === 'admin'" class="tabs is-centered">
         <ul>
           <li class="is-active"><a>Panel de Usuario</a></li>
           <li><a href="/admin">Panel de administrador</a></li>
         </ul>
       </div>
-      <UserInfo :usuario="usuario" />
-      <BookPanel :libros="libros" @libroBorrado="handleLibroBorrado" />
+      <div class="panel is-centered">
+        <UserInfo :usuario="usuario" />
+        <BookPanel :libros="libros" @libroBorrado="handleLibroBorrado" />
+      </div>
     </div>
     <div v-else class="has-text-white" style="text-align: center">
       Cargando usuario...
@@ -89,3 +91,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.panel {
+  width: 900px;
+  max-width: 100%;
+  margin: auto;
+}
+</style>

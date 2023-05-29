@@ -2,7 +2,7 @@
   <NavBar />
   <div v-if="isLoaded && libros.length > 0" class="home">
     <div class="container" style="padding: 15px;">
-      <p class="title is-4 has-text-light">Tus libros</p>
+      <p class="title is-3 has-text-light">Tus libros</p>
       <hr>
       <BookSearch @filter="filterBooks" />
       <ColumnCards :libros="filteredLibros" @bookSelected="showBookPopup" />
