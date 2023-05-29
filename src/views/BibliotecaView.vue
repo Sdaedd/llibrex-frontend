@@ -5,9 +5,10 @@
         <p class="title is-3 has-text-light">Biblioteca</p>
         <hr />
         <SliderCard :libros="libros" @bookSelected="showBookPopup" />
-        <hr />
+        
         <br />
         <div v-if="librosLeidosRecientemente.length != 0">
+            <hr />
             <p class="title is-4 has-text-light">Últimos libros leídos</p>
             <SliderCard :libros="librosLeidosRecientemente" @bookSelected="showBookPopup" />
         </div>
@@ -131,7 +132,6 @@ export default {
                                 .filter((libro) => libroIds.includes(libro._id))
                                 .map((libro) => ({
                                     ...libro,
-                                    showAll: false,
                                     capituloActual: progresoLibros.find((progreso) => progreso.libro === libro._id)?.capituloActual || 0,
                                     fechaUltimaLectura: progresoLibros.find((progreso) => progreso.libro === libro._id)?.fechaUltimaLectura || '',
                                 }));

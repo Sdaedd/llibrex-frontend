@@ -82,7 +82,6 @@ export default {
                 .filter((libro) => libroIds.includes(libro._id))
                 .map((libro) => ({
                   ...libro,
-                  showAll: false,
                   capituloActual: progresoLibros.find((progreso) => progreso.libro === libro._id)?.capituloActual || 0,
                 }));
               this.filteredLibros = this.libros

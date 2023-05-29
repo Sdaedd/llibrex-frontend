@@ -71,7 +71,6 @@ export default {
           // Manejar la respuesta exitosa del servidor
           localStorage.setItem('isAuthenticated', 'true');
           localStorage.setItem('userId', res.data.userId);
-          localStorage.setItem('userRole', res.data.userRole);
           this.nombre = '';
           this.contraseña = '';
 

@@ -3,7 +3,7 @@
     <p class="panel-heading">Libros del usuario:</p>
     <div class="panel-block">
       <p class="control has-icons-left">
-        <input class="input" type="text" v-model="searchQuery" placeholder="Search">
+        <input class="input" type="text" v-model="searchQuery" placeholder="Buscar libro...">
         <span class="icon is-left">
           <i class="fas fa-search" aria-hidden="true"></i>
         </span>
@@ -142,5 +142,23 @@ export default {
 
 .notification {
   margin-top: 1rem;
+}
+
+input {
+  color: gainsboro;
+  background-color: transparent;
+}
+
+input::placeholder {
+  color: rgba(220, 220, 220, 0.573);
+  opacity: 1;
+}
+
+input:-ms-input-placeholder {
+  color: rgba(220, 220, 220, 0.573);
+}
+
+input::-ms-input-placeholder {
+  color: rgba(220, 220, 220, 0.573);
 }
 </style>

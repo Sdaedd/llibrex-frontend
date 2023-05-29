@@ -86,22 +86,22 @@ export default {
   },
   computed: {
     hasTruncatedDescription() {
-      return this.book.description && this.book.description.length;
+      return this.book.description && this.book.description.length > 450;
     },
     truncatedDescription() {
-      if (this.hasTruncatedDescription && this.book.description.length > 450) {
+      if (this.hasTruncatedDescription) {
         return this.book.description.slice(0, 650) + '...';
       }
       return this.book.description;
     }
   },
   methods: {
-    ...mapMutations(['setSelectedBook']), // Importar la mutación setSelectedBook
+    ...mapMutations(['setSelectedBook']),
 
     leerLibro() {
-      this.setSelectedBook(this.book); // Almacenar el libro seleccionado en Vuex
+      this.setSelectedBook(this.book);
       localStorage.setItem('currentBookId', this.book._id);
-      this.$router.push({ name: 'ReaderView' }); // Redirigir a la vista ReaderView
+      this.$router.push({ name: 'ReaderView' });
     },
     closePopup() {
       this.$emit('closePopup');
@@ -112,12 +112,10 @@ export default {
       axios
         .delete(`http://localhost:3000/libros/${libroId}`)
         .then(() => {
-          // Eliminación exitosa, realizar acciones necesarias
-          this.$emit('closePopup'); // Emitir evento para cerrar el popup
-          this.$emit('libroBorrado'); // Emitir evento para indicar que se borró el libro
+          this.$emit('closePopup');
+          this.$emit('libroBorrado');
         })
         .catch((error) => {
-          // Manejar el error en caso de que ocurra
           console.error(error);
         });
     }
@@ -170,9 +168,7 @@ export default {
 
 .modal-card-body .media-left .image {
   width: 178px;
-  /* Ajustar el ancho de la imagen según sea necesario */
   height: auto;
-  /* Esto permite que la altura se ajuste automáticamente para mantener la proporción de la imagen */
 }
 
 .content {
@@ -237,7 +233,6 @@ export default {
   line-height: 1.5rem;
 }
 
-/* Estilos específicos para dispositivos móviles */
 @media screen and (max-width: 900px) {
   .modal-card {
     width: 100%;
@@ -249,7 +244,8 @@ export default {
   .modal-card-body {
     font-size: medium;
   }
-  .modal-card-foot, .media-left {
+  .modal-card-foot,
+  .media-left {
     display: none;
   }
 }

@@ -128,6 +128,24 @@ export default {
   margin-left: 0.5rem;
 }
 
+input {
+  color:gainsboro !important;
+  background-color: transparent !important;
+}
+
+input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(220, 220, 220, 0.573) !important;
+  opacity: 1; /* Firefox */
+}
+
+input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(220, 220, 220, 0.573) !important;
+}
+
+input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(220, 220, 220, 0.573) !important;
+}
+
 @media screen and (max-width: 768px) {
   .user-info,
   .panel {

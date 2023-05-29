@@ -12,14 +12,10 @@
               </progress>
             </div>
             <div class="card-content">
-              <div class="content title is-6 has-text-light">
-                <p v-if="!libro.showAll">
+              <div class="content title is-6 has-text-light" @click="showBookPopup(libro)">
+                <p>
                   {{ truncateTitle(libro.title, 42) }}
-                  <a v-if="libro.title.length > 42" @click="libro.showAll = true">...</a>
-                </p>
-                <p v-if="libro.showAll">
-                  {{ truncateTitle(libro.title, 56) }}
-                  <a @click="libro.showAll = false">←</a>
+                  <span v-if="libro.title.length > 42">...</span>
                 </p>
               </div>
             </div>
@@ -102,6 +98,10 @@
     width: 90%;
     margin: auto;
     border: white solid 1px;
+  }
+
+  .title {
+    cursor: pointer;
   }
   
   .image {

@@ -41,7 +41,12 @@
             <div class="field">
               <label class="label has-text-white">Acceso</label>
               <div class="control">
-                <input class="input" v-model="usuarioEditado.acceso" placeholder="Acceso" />
+                <div class="select">
+                  <select v-model="usuarioEditado.acceso">
+                    <option value="admin">admin</option>
+                    <option value="usuario">usuario</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="field">
@@ -58,6 +63,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import BookPanel from './BookPanel.vue';
@@ -248,5 +254,23 @@ export default {
   .modal-content {
     max-height: 100%;
   }
+}
+
+input {
+  color: gainsboro;
+  background-color: transparent;
+}
+
+input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(220, 220, 220, 0.573);
+  opacity: 1; /* Firefox */
+}
+
+input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(220, 220, 220, 0.573);
+}
+
+input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(220, 220, 220, 0.573);
 }
 </style>
