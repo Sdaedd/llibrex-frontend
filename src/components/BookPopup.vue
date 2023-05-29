@@ -126,7 +126,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos generales */
 .modal {
   padding-bottom: 0 !important;
   display: flex;

@@ -5,8 +5,9 @@
       <UserInfo :usuario="usuario"/>
       <BookPanel :libros="libros" @libroBorrado="handleLibroBorrado"/>
     </div>
-    <div v-else>
+    <div v-else class="has-text-white" style="text-align: center">
       Cargando usuario...
+      <progress class="progress is-medium is-dark" max="100">45%</progress>
     </div>
     <div v-if="error">
       Error al cargar el usuario: {{ error }}

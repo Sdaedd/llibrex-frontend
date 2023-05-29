@@ -1,6 +1,6 @@
 <template>
   <NavBar />
-  <div v-if="isLoaded" class="home">
+  <div v-if="isLoaded && libros.length > 0" class="home">
     <div class="container" style="padding: 15px;">
       <p class="title is-4 has-text-light">Tus libros</p>
       <hr>
@@ -8,6 +8,9 @@
       <ColumnCards :libros="filteredLibros" @bookSelected="showBookPopup" />
     </div>
     <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" @libroBorrado="handleLibroBorrado" />  
+  </div>
+  <div v-else class="has-text-white" style="text-align: center">
+    No hay libros que mostrar
   </div>
 </template>
 
@@ -129,3 +132,8 @@ export default {
   },
 };
 </script>
+
+<style>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css')
+</style>

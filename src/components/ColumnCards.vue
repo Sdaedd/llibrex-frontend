@@ -127,7 +127,7 @@
     border: 3px solid white;
     border-radius: 5px;
     z-index: 1;
-    filter: blur(10px);
+    filter: blur(5px);
     cursor: pointer;
     /* Cambia el cursor al estilo de un link */
   }

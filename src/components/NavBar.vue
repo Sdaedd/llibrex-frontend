@@ -50,18 +50,21 @@
             </span>
             Cuenta
           </a>
-          <div class="navbar-item">
             <div class="buttons">
               <a class="button is-danger is-outlined" @click="logOut" href="/login">
-                Salir
+                <span class="icon is-large">
+                  <i class="fa fa-sign-out"></i>
+                </span>
+                <strong>Salir</strong>
               </a>
-            </div>
           </div>
         </div>
       </div>
     </nav>
   </div>
+
 </template>
+
 
 <script>
 import UploadLibro from "@/components/UploadLibro.vue";
@@ -105,6 +108,15 @@ export default {
 .navbar-start > .navbar-item:hover, .navbar-end > .navbar-item:hover, .navbar-link:hover {
   background-color: 	hsl(0, 0%, 48%);
   color: white;
+}
+
+.buttons:hover {
+  background-color: transparent;
+
+}
+
+.buttons {
+  margin: 0 10px
 }
 
 </style>

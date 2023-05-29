@@ -1,12 +1,12 @@
 <template>
     <NavBar />
-    <div class="home container" style="padding: 15px;">
+    <div v-if="libros.length > 0" class="home container" style="padding: 15px;">
         <!-- Últimos libros leídos -->
         <p class="title is-3 has-text-light">Biblioteca</p>
         <hr />
         <SliderCard :libros="libros" @bookSelected="showBookPopup" />
         <br />
-        <div>
+        <div v-if="librosLeidosRecientemente.length != 0">
             <p class="title is-4 has-text-light">Últimos libros leídos</p>
             <SliderCard :libros="librosLeidosRecientemente" @bookSelected="showBookPopup" />
         </div>
@@ -19,6 +19,9 @@
         <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null"
             @libroBorrado="handleLibroBorrado" />
 
+    </div>
+    <div v-else class="has-text-white" style="text-align: center">
+        No hay libros que mostrar
     </div>
 </template>
 
@@ -70,9 +73,8 @@ export default {
 
         if (currentLocation != null || currentBookId != null) {
             this.saveCurrentLocation(currentLocation, currentBookId, currentBookProgress);
-        } else {
-            this.isLoaded = true;
         }
+
         this.getLibros();
     },
     methods: {
@@ -103,12 +105,10 @@ export default {
                     localStorage.removeItem('currentBookId');
                     localStorage.removeItem('currentLocation');
                     this.getLibros();
-                    this.isLoaded = true;
                 })
                 .catch((error) => {
                     // Se produjo un error al realizar la solicitud
                     console.error(error);
-                    this.isLoaded = true;
                 });
         },
         getLibros() {
@@ -138,12 +138,10 @@ export default {
                         })
                         .catch((error) => {
                             console.log(error);
-                            this.isLoaded = true;
                         });
                 })
                 .catch((error) => {
                     console.log(error);
-                    this.isLoaded = true;
                 });
         },
 
