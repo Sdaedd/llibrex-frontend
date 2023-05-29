@@ -20,7 +20,6 @@
         </div>
       </div>
     </div>
-
     <div v-if="mostrarPanelEdicion" class="modal is-active">
       <div class="modal-background" @click="mostrarPanelEdicion = false"></div>
       <div class="modal-content">
@@ -57,10 +56,8 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
-
 <script>
 import axios from 'axios';
 import BookPanel from './BookPanel.vue';
@@ -69,9 +66,14 @@ export default {
   components: {
     BookPanel,
   },
+  props: {
+    usuarios: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      usuarios: [],
       usuariosFiltrados: [],
       mostrarPanelEdicion: false,
       librosUsuario: [],
@@ -85,21 +87,10 @@ export default {
     };
   },
   methods: {
-    obtenerUsuarios() {
-      axios.get('http://localhost:3000/usuarios')
-        .then(response => {
-          this.usuarios = response.data;
-          this.usuariosFiltrados = response.data; // Inicialmente, mostrar todos los usuarios
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
     eliminarUsuario(usuarioId) {
-      axios.delete(`http://localhost:3000/usuarios/${usuarioId}`)
+      axios
+        .delete(`http://localhost:3000/usuarios/${usuarioId}`)
         .then(() => {
-          // Eliminación exitosa del usuario
-          // Actualizar la lista de usuarios
           this.obtenerUsuarios();
         })
         .catch(error => {
@@ -117,10 +108,9 @@ export default {
       this.verLibros(usuario._id);
     },
     guardarUsuarioEditado() {
-      axios.put(`http://localhost:3000/usuarios/${this.usuarioEditado._id}`, this.usuarioEditado)
+      axios
+        .put(`http://localhost:3000/usuarios/${this.usuarioEditado._id}`, this.usuarioEditado)
         .then(() => {
-          // Edición exitosa del usuario
-          // Cerrar panel de edición y actualizar la lista de usuarios
           this.mostrarPanelEdicion = false;
           this.obtenerUsuarios();
         })
@@ -129,8 +119,6 @@ export default {
         });
     },
     verLibros(usuarioId) {
-      this.usuarioActual = usuarioId;
-
       axios
         .get(`http://localhost:3000/usuarios/${usuarioId}/libros`)
         .then((response) => {
@@ -147,7 +135,6 @@ export default {
                   showAll: false,
                   capituloActual: progresoLibros.find((progreso) => progreso.libro === libro._id)?.capituloActual || 0,
                 }));
-              this.mostrarPanelLibros = true;
             })
             .catch((error) => {
               console.log(error);
@@ -157,12 +144,18 @@ export default {
           console.log(error);
         });
     },
-    cerrarPanelLibros() {
-      this.mostrarPanelLibros = false;
-      this.librosUsuario = [];
-    },
     handleLibroBorrado() {
-      this.verLibros(this.usuarioActual); // Vuelve a obtener la lista de libros para refrescarla
+      this.verLibros(this.usuarioActual);
+    },
+    obtenerUsuarios() {
+      axios
+        .get('http://localhost:3000/usuarios')
+        .then((response) => {
+          this.usuariosFiltrados = response.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
   watch: {
@@ -178,7 +171,7 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped>
 .container {
   padding: 20px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="panel shadow">
+  <div class="panel">
     <p class="panel-heading">Libros del usuario:</p>
     <div class="panel-block">
       <p class="control has-icons-left">
