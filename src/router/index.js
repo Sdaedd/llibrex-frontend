@@ -6,6 +6,7 @@ import LoginUsuario from '../views/LoginView.vue';
 import ReaderView from '../views/ReaderView.vue';
 import BibliotecaView from '../views/BibliotecaView.vue';
 import AccountView from '../views/AccountView.vue';
+import AdminView from '../views/AdminView.vue'
 
 
 const router = createRouter({
@@ -41,6 +42,11 @@ const router = createRouter({
       path: '/cuenta',
       name: 'AccountView',
       component: AccountView
+    },
+    {
+      path: '/admin',
+      name: 'AdminView',
+      component: AdminView
     },
     {
       path: "/:pathmatch(.*)*",

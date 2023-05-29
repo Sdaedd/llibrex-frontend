@@ -9,8 +9,12 @@
     </div>
     <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" @libroBorrado="handleLibroBorrado" />  
   </div>
-  <div v-else class="has-text-white" style="text-align: center">
-    No hay libros que mostrar
+  
+  <div v-if="filteredLibros.length == 0 || libros.length < 0" class="container" style="text-align: center">
+    <br />
+    <div class="notification is-warning is-light">
+      No hay libros que mostrar
+    </div>
   </div>
 </template>
 

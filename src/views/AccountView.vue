@@ -2,8 +2,14 @@
   <div>
     <NavBar />
     <div v-if="usuario && libros">
-      <UserInfo :usuario="usuario"/>
-      <BookPanel :libros="libros" @libroBorrado="handleLibroBorrado"/>
+      <div v-if="usuario.acceso === 'admin'" class="tabs is-centered">
+        <ul>
+          <li class="is-active"><a>Panel de Usuario</a></li>
+          <li><a href="/admin">Panel de administrador</a></li>
+        </ul>
+      </div>
+      <UserInfo :usuario="usuario" />
+      <BookPanel :libros="libros" @libroBorrado="handleLibroBorrado" />
     </div>
     <div v-else class="has-text-white" style="text-align: center">
       Cargando usuario...

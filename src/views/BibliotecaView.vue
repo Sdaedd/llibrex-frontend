@@ -1,6 +1,6 @@
 <template>
     <NavBar />
-    <div v-if="libros.length > 0" class="home container" style="padding: 15px;">
+    <div v-if="libros.length > 0" class="container">
         <!-- Últimos libros leídos -->
         <p class="title is-3 has-text-light">Biblioteca</p>
         <hr />
@@ -18,10 +18,12 @@
         </div>
         <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null"
             @libroBorrado="handleLibroBorrado" />
-
     </div>
-    <div v-else class="has-text-white" style="text-align: center">
-        No hay libros que mostrar
+    <div v-if="libros.length == 0" class="container" style="text-align: center">
+        <br />
+        <div class="notification is-warning is-light">
+          No hay libros que mostrar
+        </div>
     </div>
 </template>
 
