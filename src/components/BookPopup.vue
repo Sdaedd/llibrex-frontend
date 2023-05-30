@@ -27,6 +27,7 @@
                   <p><strong class="has-text-grey-light title is-5">Valoración:</strong> {{ book.rating }}</p>
                 </div>
               </div>
+              <span v-if="showProgress">
               <button class="button is-primary is-outlined is-small" @click="leerLibro">
                 <span class="is-size-6">Leer</span>
                 <span class="icon is-small">
@@ -39,12 +40,12 @@
                   <i class="fas fa-times"></i>
                 </span>
               </button>
-  
+            </span>
             </div>
           </div>
         </div>
         <br />
-        <div class="level-item has-text-centered progress-container">
+        <div v-if="showProgress" class="level-item has-text-centered progress-container">
           <progress class="progress show-value is-large is-dark" :value="book.capituloActual" max="100"></progress>
           <p class="progress-value has-text-grey">{{ book.capituloActual }}%</p>
         </div>
@@ -55,7 +56,7 @@
             <p>{{ book.description }}</p>
             <button class="button is-small is-light is-outlined is-focused" @click="showFullDescription = false">Mostrar menos</button>
           </div>
-          <div v-else-if="hasTruncatedDescription">
+          <div v-else>
             <p>{{ truncatedDescription }}</p>
             <button v-if="book.description.length > 450" class="button is-light is-outlined" @click="showFullDescription = true">Mostrar más</button>
           </div>
@@ -77,7 +78,11 @@ export default {
     book: {
       type: Object,
       required: true
-    }
+    },
+    showProgress: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {

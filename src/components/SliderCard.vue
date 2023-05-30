@@ -8,9 +8,11 @@
               <img :src="libro.image" :alt="'Imagen de ' + libro.titulo">
               <div class="image-overlay"></div>
             </figure>
-            <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="100">
-              {{ libro.capituloActual }}%
-            </progress>
+            <div v-if="showProgress" class="progress-wrapper">
+              <progress class="progress is-small is-dark" :value="libro.capituloActual" :max="100">
+                {{ libro.capituloActual }}%
+              </progress>
+            </div>
           </div>
           <div class="card-content">
             <div class="content title is-6 has-text-light" @click="showBookPopup(libro)">
@@ -23,7 +25,7 @@
           <div class="card-content">
             <p class="subtitle is-7 has-text-grey">{{ formatAuthors(libro.authors) }}</p>
           </div>
-          <footer class="card-footer has-background-black-ter">
+          <footer class="card-footer has-background-black-ter" v-if="showProgress">
             <button class="button is-primary is-outlined is-small card-footer-item" @click="leerLibro(libro)">
               <span class="is-size-6">Leer</span>
               <span class="icon is-small">
@@ -54,7 +56,11 @@ export default {
     Navigation,
   },
   props: {
-    libros: Array, // Add libros prop
+    libros: Array,
+    showProgress: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
