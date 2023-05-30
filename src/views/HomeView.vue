@@ -5,6 +5,9 @@
       <p class="title is-3 has-text-light">Best Sellers Mensuales</p>
       <hr>
       <SliderBestSellers />
+      <p class="title is-3 has-text-light">Libros gratuitos</p>
+      <hr>
+      <SliderFreeBooks />
       <p class="title is-3 has-text-light">Tus libros</p>
       <hr>
       <BookSearch @filter="filterBooks" />
@@ -29,6 +32,7 @@ import BookPopup from '@/components/BookPopup.vue';
 import NavBar from '@/components/NavBar.vue';
 import BookSearch from '@/components/BookSearch.vue';
 import SliderBestSellers from '@/components/SliderBestSellers.vue';
+import SliderFreeBooks from '@/components/SliderFreeBooks.vue';
 
 export default {
   name: 'HomeView',
@@ -37,7 +41,8 @@ export default {
     BookPopup,
     NavBar,
     BookSearch,
-    SliderBestSellers
+    SliderBestSellers,
+    SliderFreeBooks
   },
   data() {
     return {
