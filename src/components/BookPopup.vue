@@ -10,31 +10,67 @@
         <div class="media">
           <div class="media-left">
             <figure class="image">
-              <img :src="book.image" alt="Book Cover">
+              <img :src="book.image" alt="Book Cover" />
             </figure>
           </div>
           <div class="media-content">
             <div class="content">
               <div class="columns">
                 <div class="column">
-                  <p><strong class="has-text-grey-light title is-5">Autor/es:</strong> {{ book.authors.join(', ') }}</p>
-                  <p><strong class="has-text-grey-light title is-5">Editorial:</strong> {{ book.publisher }}</p>
-                  <p><strong class="has-text-grey-light title is-5">Género:</strong> {{ book.categories.slice(0, 3).join(', ') }}</p>
+                  <p>
+                    <strong class="has-text-grey-light title is-5"
+                      >Autor/es:</strong
+                    >
+                    {{ book.authors.join(", ") }}
+                  </p>
+                  <p>
+                    <strong class="has-text-grey-light title is-5"
+                      >Editorial:</strong
+                    >
+                    {{ book.publisher }}
+                  </p>
+                  <p>
+                    <strong class="has-text-grey-light title is-5"
+                      >Género:</strong
+                    >
+                    {{ book.categories.slice(0, 3).join(", ") }}
+                  </p>
                 </div>
                 <div class="column">
-                  <p><strong class="has-text-grey-light title is-5">ISBN:</strong> {{ book.isbn }}</p>
-                  <p><strong class="has-text-grey-light title is-5">Páginas:</strong> {{ book.pageCount === 0 ? 'Desconocido' : book.pageCount }}</p>
-                  <p><strong class="has-text-grey-light title is-5">Valoración:</strong> {{ book.rating }}</p>
+                  <p>
+                    <strong class="has-text-grey-light title is-5"
+                      >ISBN:</strong
+                    >
+                    {{ book.isbn }}
+                  </p>
+                  <p>
+                    <strong class="has-text-grey-light title is-5"
+                      >Páginas:</strong
+                    >
+                    {{ book.pageCount === 0 ? "Desconocido" : book.pageCount }}
+                  </p>
+                  <p>
+                    <strong class="has-text-grey-light title is-5"
+                      >Valoración:</strong
+                    >
+                    {{ book.rating }}
+                  </p>
                 </div>
               </div>
               <span v-if="showProgress">
-                <button class="button is-primary is-outlined is-small" @click="leerLibro">
+                <button
+                  class="button is-primary is-outlined is-small"
+                  @click="leerLibro"
+                >
                   <span class="is-size-6">Leer</span>
                   <span class="icon is-small">
                     <i class="fas fa-book-open"></i>
                   </span>
                 </button>
-                <button class="button is-danger is-outlined is-small" @click="borrarLibro">
+                <button
+                  class="button is-danger is-outlined is-small"
+                  @click="borrarLibro"
+                >
                   <span class="is-size-6">Borrar</span>
                   <span class="icon is-small">
                     <i class="fas fa-times"></i>
@@ -45,48 +81,81 @@
           </div>
         </div>
         <br />
-        <div v-if="showProgress" class="level-item has-text-centered progress-container">
-          <progress class="progress show-value is-large is-dark" :value="book.capituloActual" max="100"></progress>
+        <div
+          v-if="showProgress"
+          class="level-item has-text-centered progress-container"
+        >
+          <progress
+            class="progress show-value is-large is-dark"
+            :value="book.capituloActual"
+            max="100"
+          ></progress>
           <p class="progress-value has-text-grey">{{ book.capituloActual }}%</p>
         </div>
 
         <div class="description-wrapper">
-          <p><strong class="has-text-grey-light title is-3">Sinopsis:</strong></p>
+          <p>
+            <strong class="has-text-grey-light title is-3">Sinopsis:</strong>
+          </p>
           <div v-if="showFullDescription">
             <p>{{ book.description }}</p>
-            <button class="button is-small is-light is-outlined is-focused" @click="showFullDescription = false">Mostrar menos</button>
+            <button
+              class="button is-small is-light is-outlined is-focused"
+              @click="showFullDescription = false"
+            >
+              Mostrar menos
+            </button>
           </div>
           <div v-else>
             <p>{{ truncatedDescription }}</p>
-            <button v-if="book.description.length > 450" class="button is-light is-outlined" @click="showFullDescription = true">Mostrar más</button>
+            <button
+              v-if="book.description.length > 450"
+              class="button is-light is-outlined"
+              @click="showFullDescription = true"
+            >
+              Mostrar más
+            </button>
           </div>
         </div>
-        <hr class="has-background-grey-light" style="margin-top: 2rem; margin-bottom: 2rem;">
+        <hr
+          class="has-background-grey-light"
+          style="margin-top: 2rem; margin-bottom: 2rem"
+        />
 
-        <div class="comments-section" >
+        <div class="comments-section">
           <h4 class="title is-4 has-text-grey-light">Comentarios</h4>
-          <div class="comment" v-for="comment in this.comentarios" :key="comment._id">
-            <div class="columns">
-              <div class="column">
-                <p><strong>{{ comment.usuario }}</strong></p>
-                <p>{{ comment.fechaPublicacion }}</p>
+          <div class="comment media"  v-for="comment in this.comentarios" :key="comment._id">
+            <div class="media-content">
+              <div class="content">
+                <p>
+                  <strong class="has-text-white title is-4">{{ comment.usuario }} </strong> <small class=""> {{ comment.fechaPublicacion }}</small>
+                  
+                  <br /><br />
+                  {{ comment.contenido }}
+                </p>
               </div>
-              <div class="column">
-                <p>{{ comment.contenido }}</p>
-                <div class="comment-rating">
-                  <span class="has-text-weight-bold">Valoración: </span>
-                  <span v-for="star in comment.valoracion" :key="star" class="icon has-text-primary">
-                    <i class="fas fa-star" :class="{ 'has-text-warning': star <= comment.valoracion }"></i>
-                  </span>
+
+              <nav class="level is-mobile">
+                <div class="level-left">
+                  <a class="level-item">
+                  </a>
+
+                  <a class="level-item">
+                    <span class="icon is-small"><i class="fas fa-heart"></i></span>
+                  </a>
                 </div>
-              </div>
+              </nav>
             </div>
           </div>
-          <form class="comment-form" @submit.prevent="submitComment()">
+                    <form class="comment-form" @submit.prevent="submitComment()">
             <div class="field">
               <label class="label has-text-white">Nuevo comentario:</label>
               <div class="control">
-                <textarea class="textarea" v-model="newComment.contenido" required></textarea>
+                <textarea
+                  class="textarea"
+                  v-model="newComment.contenido"
+                  required
+                ></textarea>
               </div>
             </div>
             <div class="field">
@@ -95,14 +164,18 @@
                 <div class="select">
                   <select v-model="newComment.valoracion" required>
                     <option disabled value="">Seleccione una valoración</option>
-                    <option v-for="rating in 5" :key="rating" :value="rating">{{ rating }}</option>
+                    <option v-for="rating in 5" :key="rating" :value="rating">
+                      {{ rating }}
+                    </option>
                   </select>
                 </div>
               </div>
             </div>
             <div class="field">
               <div class="control">
-                <button type="submit" class="button is-primary">Enviar comentario</button>
+                <button type="submit" class="button is-primary">
+                  Enviar comentario
+                </button>
               </div>
             </div>
           </form>
@@ -114,14 +187,14 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
-import axios from 'axios';
+import { mapMutations } from "vuex";
+import axios from "axios";
 
 export default {
   props: {
     book: {
       type: Object,
-      required: true
+      required: true,
     },
     showProgress: {
       type: Boolean,
@@ -134,7 +207,7 @@ export default {
       comentarios: [],
       showFullDescription: false,
       newComment: {
-        contenido: '',
+        contenido: "",
         valoracion: null,
       },
     };
@@ -145,66 +218,66 @@ export default {
     },
     truncatedDescription() {
       if (this.hasTruncatedDescription) {
-        return this.book.description.slice(0, 650) + '...';
+        return this.book.description.slice(0, 650) + "...";
       }
       return this.book.description;
-    }
+    },
   },
   mounted() {
-    this.getUsuario()
-    this.getComentarios()
+    this.getUsuario();
+    this.getComentarios();
   },
   methods: {
-    ...mapMutations(['setSelectedBook']),
+    ...mapMutations(["setSelectedBook"]),
 
     getUsuario() {
-      const userId = localStorage.getItem('userId');
-      axios.get(`http://localhost:3000/usuarios/${userId}`)
-        .then(response => {
+      const userId = localStorage.getItem("userId");
+      axios
+        .get(`http://localhost:3000/usuarios/${userId}`)
+        .then((response) => {
           this.usuario = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           this.error = error.message;
           console.error(error);
         });
     },
 
     getComentarios() {
-  const libroId = this.book._id;
+      const libroId = this.book._id;
 
-  axios
-    .get(`http://localhost:3000/libros/${libroId}/comentarios`)
-    .then((response) => {
-      const comments = response.data;
-      const commentsIds = comments.map((comment) => comment.comment);
-      
       axios
-        .get('http://localhost:3000/comentarios')
+        .get(`http://localhost:3000/libros/${libroId}/comentarios`)
         .then((response) => {
-          
-          this.comentarios = response.data
-            .filter((comment) => commentsIds.includes(comment._id))
-            .map((comment) => ({
-              ...comment,
-            }));
-            console.log(this.comentarios);
+          const comments = response.data;
+          const commentsIds = comments.map((comment) => comment.comment);
+
+          axios
+            .get("http://localhost:3000/comentarios")
+            .then((response) => {
+              this.comentarios = response.data
+                .filter((comment) => commentsIds.includes(comment._id))
+                .map((comment) => ({
+                  ...comment,
+                }));
+              console.log(this.comentarios);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
         });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-},
+    },
 
     leerLibro() {
       this.setSelectedBook(this.book);
-      localStorage.setItem('currentBookId', this.book._id);
-      this.$router.push({ name: 'ReaderView' });
+      localStorage.setItem("currentBookId", this.book._id);
+      this.$router.push({ name: "ReaderView" });
     },
     closePopup() {
-      this.$emit('closePopup');
+      this.$emit("closePopup");
     },
     borrarLibro() {
       const libroId = this.book._id;
@@ -212,8 +285,8 @@ export default {
       axios
         .delete(`http://localhost:3000/libros/${libroId}`)
         .then(() => {
-          this.$emit('closePopup');
-          this.$emit('libroBorrado');
+          this.$emit("closePopup");
+          this.$emit("libroBorrado");
         })
         .catch((error) => {
           console.error(error);
@@ -224,21 +297,24 @@ export default {
         contenido: this.newComment.contenido,
         valoracion: this.newComment.valoracion,
         fechaPublicacion: new Date().toISOString(),
-        usuario: localStorage.getItem('userId'),
-        libro: this.book._id
+        usuario: this.usuario.nombre,
+        libro: this.book._id,
       };
       axios
-        .post(`http://localhost:3000/libros/${this.book._id}/comentarios`, commentData)
+        .post(
+          `http://localhost:3000/libros/${this.book._id}/comentarios`,
+          commentData
+        )
         .then(() => {
           /* this.book.comments.push(response.data); */
-          this.newComment.contenido = '';
+          this.newComment.contenido = "";
           this.newComment.valoracion = null;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
