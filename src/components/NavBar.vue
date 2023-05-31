@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="userAcceso">
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -44,11 +44,17 @@
         </div>
 
         <div class="navbar-end">
-          <a class="navbar-item" href="/cuenta">
+          <a class="navbar-item has-text-primary" href="/cuenta">
             <span class="icon is-large">
               <i class="fas fa-user"></i>
             </span>
             Cuenta
+          </a>
+          <a class="navbar-item has-text-warning" href="/admin"  v-if="userAcceso == 'admin'">
+            <span class="icon is-large">
+              <i class="fas fa-lock"></i>
+            </span>
+            Admin
           </a>
             <div class="buttons">
               <a class="button is-danger is-outlined" @click="logOut" href="/login">
@@ -67,6 +73,7 @@
 
 
 <script>
+import axios from 'axios';
 import UploadLibro from "@/components/UploadLibro.vue";
 
 export default {
@@ -75,11 +82,26 @@ export default {
   },
   data() {
     return {
+      userAcceso: null,
       isNavbarActive: false, // Variable para controlar el estado del navbar
       isDropdownOpen: false, // Variable para controlar el estado del dropdown
     };
   },
+  mounted() {
+    this.getUsuarioAcceso()   
+  },
   methods: {
+    getUsuarioAcceso() {
+      const userId = localStorage.getItem('userId');
+      axios.get(`http://localhost:3000/usuarios/${userId}`)
+        .then(response => {
+          this.userAcceso = response.data.acceso
+        })
+        .catch(error => {
+          this.error = error.message;
+          console.error(error);
+        });
+    },
     logOut() {
       localStorage.setItem('isAuthenticated', 'false');
       localStorage.setItem('userId', null);

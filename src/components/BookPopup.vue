@@ -1,5 +1,5 @@
 <template>
-  <div class="modal is-active">
+  <div class="modal is-active" v-if="usuario">
     <div class="modal-background" @click="closePopup"></div>
     <div class="modal-card has-text-white">
       <header class="modal-card-head has-background-black-ter">
@@ -28,19 +28,19 @@
                 </div>
               </div>
               <span v-if="showProgress">
-              <button class="button is-primary is-outlined is-small" @click="leerLibro">
-                <span class="is-size-6">Leer</span>
-                <span class="icon is-small">
-                  <i class="fas fa-book-open"></i>
-                </span>
-              </button>
-              <button class="button is-danger is-outlined is-small" @click="borrarLibro">
-                <span class="is-size-6">Borrar</span>
-                <span class="icon is-small">
-                  <i class="fas fa-times"></i>
-                </span>
-              </button>
-            </span>
+                <button class="button is-primary is-outlined is-small" @click="leerLibro">
+                  <span class="is-size-6">Leer</span>
+                  <span class="icon is-small">
+                    <i class="fas fa-book-open"></i>
+                  </span>
+                </button>
+                <button class="button is-danger is-outlined is-small" @click="borrarLibro">
+                  <span class="is-size-6">Borrar</span>
+                  <span class="icon is-small">
+                    <i class="fas fa-times"></i>
+                  </span>
+                </button>
+              </span>
             </div>
           </div>
         </div>
@@ -61,10 +61,54 @@
             <button v-if="book.description.length > 450" class="button is-light is-outlined" @click="showFullDescription = true">Mostrar más</button>
           </div>
         </div>
+        <hr class="has-background-grey-light" style="margin-top: 2rem; margin-bottom: 2rem;">
+
+        <div class="comments-section" >
+          <h4 class="title is-4 has-text-grey-light">Comentarios</h4>
+          <div class="comment" v-for="comment in this.comentarios" :key="comment._id">
+            <div class="columns">
+              <div class="column">
+                <p><strong>{{ comment.usuario }}</strong></p>
+                <p>{{ comment.fechaPublicacion }}</p>
+              </div>
+              <div class="column">
+                <p>{{ comment.contenido }}</p>
+                <div class="comment-rating">
+                  <span class="has-text-weight-bold">Valoración: </span>
+                  <span v-for="star in comment.valoracion" :key="star" class="icon has-text-primary">
+                    <i class="fas fa-star" :class="{ 'has-text-warning': star <= comment.valoracion }"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <form class="comment-form" @submit.prevent="submitComment()">
+            <div class="field">
+              <label class="label has-text-white">Nuevo comentario:</label>
+              <div class="control">
+                <textarea class="textarea" v-model="newComment.contenido" required></textarea>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label has-text-white">Valoración:</label>
+              <div class="control">
+                <div class="select">
+                  <select v-model="newComment.valoracion" required>
+                    <option disabled value="">Seleccione una valoración</option>
+                    <option v-for="rating in 5" :key="rating" :value="rating">{{ rating }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="submit" class="button is-primary">Enviar comentario</button>
+              </div>
+            </div>
+          </form>
+        </div>
       </section>
-      <footer class="modal-card-foot has-background-black-ter">
-        <!-- Contenido del pie de página si es necesario -->
-      </footer>
+      <footer class="modal-card-foot has-background-black-ter"></footer>
     </div>
   </div>
 </template>
@@ -86,7 +130,13 @@ export default {
   },
   data() {
     return {
-      showFullDescription: false
+      usuario: [],
+      comentarios: [],
+      showFullDescription: false,
+      newComment: {
+        contenido: '',
+        valoracion: null,
+      },
     };
   },
   computed: {
@@ -100,8 +150,53 @@ export default {
       return this.book.description;
     }
   },
+  mounted() {
+    this.getUsuario()
+    this.getComentarios()
+  },
   methods: {
     ...mapMutations(['setSelectedBook']),
+
+    getUsuario() {
+      const userId = localStorage.getItem('userId');
+      axios.get(`http://localhost:3000/usuarios/${userId}`)
+        .then(response => {
+          this.usuario = response.data;
+        })
+        .catch(error => {
+          this.error = error.message;
+          console.error(error);
+        });
+    },
+
+    getComentarios() {
+  const libroId = this.book._id;
+
+  axios
+    .get(`http://localhost:3000/libros/${libroId}/comentarios`)
+    .then((response) => {
+      const comments = response.data;
+      const commentsIds = comments.map((comment) => comment.comment);
+      
+      axios
+        .get('http://localhost:3000/comentarios')
+        .then((response) => {
+          
+          this.comentarios = response.data
+            .filter((comment) => commentsIds.includes(comment._id))
+            .map((comment) => ({
+              ...comment,
+            }));
+            console.log(this.comentarios);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+},
 
     leerLibro() {
       this.setSelectedBook(this.book);
@@ -121,6 +216,25 @@ export default {
           this.$emit('libroBorrado');
         })
         .catch((error) => {
+          console.error(error);
+        });
+    },
+    submitComment() {
+      const commentData = {
+        contenido: this.newComment.contenido,
+        valoracion: this.newComment.valoracion,
+        fechaPublicacion: new Date().toISOString(),
+        usuario: localStorage.getItem('userId'),
+        libro: this.book._id
+      };
+      axios
+        .post(`http://localhost:3000/libros/${this.book._id}/comentarios`, commentData)
+        .then(() => {
+          /* this.book.comments.push(response.data); */
+          this.newComment.contenido = '';
+          this.newComment.valoracion = null;
+        })
+        .catch(error => {
           console.error(error);
         });
     }

@@ -2,10 +2,10 @@
   <div>
     <NavBar />
     <div v-if="usuario && libros" >
-      <div v-if="usuario.acceso === 'admin'" class="tabs is-centered">
+      <div class="tabs is-centered has-background-primary">
         <ul>
           <li class="is-active"><a>Panel de Usuario</a></li>
-          <li><a href="/admin">Panel de administrador</a></li>
+          <li v-if="usuario.acceso === 'admin'"><a href="/admin">Panel de administrador</a></li>
         </ul>
       </div>
       <div class="panel is-centered">

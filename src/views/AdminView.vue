@@ -1,6 +1,6 @@
 <template>
   <NavBar />
-  <div class="tabs is-centered">
+  <div class="tabs is-centered has-background-warning">
     <ul>
       <li><a href="/cuenta">Panel de Usuario</a></li>
       <li class="is-active"><a>Panel de administrador</a></li>
