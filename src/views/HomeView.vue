@@ -1,17 +1,16 @@
 <template>
   <NavBar />
-  <div v-if="isLoaded && libros.length > 0" class="home">
+  <div class="home">
     <div class="container" style="padding: 15px;">
       <p class="title is-3 has-text-light">Best Sellers Mensuales</p>
       <hr>
       <SliderBestSellers />
-      <p class="title is-3 has-text-light">Libros gratuitos</p>
-      <hr>
-      <SliderFreeBooks />
       <p class="title is-3 has-text-light">Tus libros</p>
       <hr>
+      <div v-if="isLoaded && libros.length > 0">
       <BookSearch @filter="filterBooks" />
       <ColumnCards :libros="filteredLibros" @bookSelected="showBookPopup" />
+      </div>
     </div>
     <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" @libroBorrado="handleLibroBorrado" />  
   </div>
@@ -32,7 +31,6 @@ import BookPopup from '@/components/BookPopup.vue';
 import NavBar from '@/components/NavBar.vue';
 import BookSearch from '@/components/BookSearch.vue';
 import SliderBestSellers from '@/components/SliderBestSellers.vue';
-import SliderFreeBooks from '@/components/SliderFreeBooks.vue';
 
 export default {
   name: 'HomeView',
@@ -42,7 +40,6 @@ export default {
     NavBar,
     BookSearch,
     SliderBestSellers,
-    SliderFreeBooks
   },
   data() {
     return {

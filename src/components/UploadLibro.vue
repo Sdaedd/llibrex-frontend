@@ -3,7 +3,12 @@
     <form @submit.prevent="parseEpub">
       <div class="file has-name is-boxed">
         <label class="file-label">
-          <input class="file-input is-black" type="file" name="file" @change="handleFileUpload" />
+          <input
+            class="file-input is-black"
+            type="file"
+            name="file"
+            @change="handleFileUpload"
+          />
           <span class="file-cta has-background-dark">
             <span class="file-icon">
               <i class="fas fa-upload"></i>
@@ -15,7 +20,12 @@
           </span>
         </label>
       </div>
-      <button v-if="!bookData" class="button is-black mt-3" type="submit" :disabled="!file">
+      <button
+        v-if="!bookData"
+        class="button is-black mt-3"
+        type="submit"
+        :disabled="!file"
+      >
         Subir EPUB
       </button>
       <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
@@ -26,7 +36,7 @@
 <script>
 import ePub from "epubjs";
 import axios from "axios";
-import router from "@/router"
+import router from "@/router";
 
 export default {
   data() {
@@ -47,7 +57,8 @@ export default {
         this.errorMessage = null; // Limpiar mensaje de error si el archivo es válido
       } else {
         this.file = null;
-        this.errorMessage = "Archivo no válido. Por favor, selecciona un archivo EPUB.";
+        this.errorMessage =
+          "Archivo no válido. Por favor, selecciona un archivo EPUB.";
       }
     },
     async parseEpub() {
@@ -56,11 +67,9 @@ export default {
         await this.book.ready;
         const metadata = this.book.package.metadata;
         var searchId = metadata.identifier.replace("urn:", "");
-        console.log(metadata)
         if (!searchId.includes("isbn")) {
           searchId = metadata.title;
         }
-        console.log(metadata);
         await this.searchOnGoogleBooks(searchId);
       }
     },
@@ -73,13 +82,14 @@ export default {
 
         if (response.data.items && response.data.items.length > 0) {
           const data = response.data.items[0];
-          console.log(data);
           this.bookData = {
             googleId: data.id,
             title: data.volumeInfo.title,
             authors: data.volumeInfo.authors,
             description: data.volumeInfo.description,
-            image: data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "",
+            image: data.volumeInfo.imageLinks
+              ? data.volumeInfo.imageLinks.thumbnail
+              : "",
             publicationDate: data.volumeInfo.publishedDate,
             pageCount: data.volumeInfo.pageCount,
             publisher: data.volumeInfo.publisher,
@@ -97,7 +107,31 @@ export default {
     },
     async saveBook() {
       try {
-        const formData = new FormData();
+        const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
+        const libroExists = await this.checkISBNExists(this.bookData.isbn);
+        
+        
+    // Si el libro ya existe, le guarda la id del libro al usuario
+        if (libroExists[0]) {
+          const libro = libroExists[1];
+          console.log("libro exists 1 id:");
+          console.log(libro[0]._id);
+          const libroId = libro[0]._id;
+          const progresoLibrosData = {
+            libro: libroId,
+            capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
+          };
+
+          console.log("ISBN already exists in the database.");
+          await axios.post(
+            `http://localhost:3000/usuarios/${userId}/libros`,
+            progresoLibrosData
+          );
+
+          console.log("Libro guardado correctamente");
+          router.go(); 
+        }else{
+          const formData = new FormData();
         formData.append("epub", this.file); // Append the rest of the book data to FormData
         formData.append("googleId", this.bookData.googleId);
         formData.append("title", this.bookData.title);
@@ -109,28 +143,56 @@ export default {
         formData.append("publisher", this.bookData.publisher);
         formData.append("categories", this.bookData.categories);
         formData.append("isbn", this.bookData.isbn);
-
-        const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
-
-        const response = await axios.post(`http://localhost:3000/libros`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data", // Establece el tipo de contenido correcto para FormData
-          },
-        });
+          console.log("FORM DATA: ")
+          console.log(formData)
+        const response = await axios.post(
+          `http://localhost:3000/libros`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data", // Establece el tipo de contenido correcto para FormData
+            },
+          }
+        );
 
         const libroId = response.data._id; // Obtén el ID del libro guardado
-
+        console.log(libroId);
         const progresoLibrosData = {
           libro: libroId,
           capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
         };
 
-        await axios.post(`http://localhost:3000/usuarios/${userId}/libros`, progresoLibrosData);
+        await axios.post(
+          `http://localhost:3000/usuarios/${userId}/libros`,
+          progresoLibrosData
+        );
 
         console.log("Libro guardado correctamente:", response.data);
         router.go();
+        }
+
+        
       } catch (error) {
         console.error("Error al guardar el libro:", error);
+      }
+    },
+    async checkISBNExists(isbn) {
+      try {
+        console.log("isbn: " + isbn);
+        const response = await axios.get(
+          `http://localhost:3000/libros?isbn=${isbn}`
+        );
+
+        if (response.data.length > 0) {
+          // ISBN exists in the database
+          return [true, response.data];
+        } else {
+          // ISBN does not exist in the database
+          return [false];
+        }
+      } catch (error) {
+        console.error("Error checking ISBN:", error);
+        return false; // Assume ISBN does not exist in case of an error
       }
     },
   },

@@ -32,7 +32,7 @@
         const currentYear = currentDate.getFullYear();
         const lastMonth = currentDate.getMonth(); // Los meses comienzan en cero
   
-        const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:popularity&maxResults=10&key=${apiKey}&country=US&startDate=${currentYear}-${lastMonth}-01&endDate=${currentYear}-${lastMonth}-31`;
+        const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:popularity&maxResults=10&key=${apiKey}&startDate=${currentYear}-${lastMonth}-01&endDate=${currentYear}-${lastMonth}-31`;
   
         axios
           .get(apiUrl)
@@ -51,9 +51,6 @@
                 isbn: data.volumeInfo.industryIdentifiers[0].identifier
               };
             });
-  
-            console.log(apiUrl);
-            console.log(booksData);
   
             this.books = booksData;
           })
