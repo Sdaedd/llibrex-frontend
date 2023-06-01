@@ -7,7 +7,7 @@
       <div class="control">
         <div class="select">
           <select v-model="sortBy">
-            <option value="">Ningun filtro</option>
+            <option value="">Por defecto</option>
             <option value="dateAsc">Más antiguos primero</option>
             <option value="dateDesc">Más nuevos primero</option>
             <option value="likesAsc">Comentarios menos gustados</option>
