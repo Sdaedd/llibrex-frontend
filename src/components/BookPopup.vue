@@ -50,11 +50,16 @@
                     {{ book.pageCount === 0 ? "Desconocido" : book.pageCount }}
                   </p>
                   <p>
-                    <strong class="has-text-grey-light title is-5"
-                      >Valoración:</strong
-                    >
-                    {{ book.rating }}
-                  </p>
+                    <strong class="has-text-grey-light title is-5">Valoración:</strong>
+                    <span class="comment-rating">
+                      <span v-for="star in 5" :key="star" class="icon has-text-dark">
+                        <i class="fas fa-star" :class="{
+                          'has-text-warning': star <= getAverageRating(comentarios),
+                        }"></i>
+                      </span>
+                      ({{comentarios.length}})
+                    </span>
+                  </p>                  
                 </div>
               </div>
               <span v-if="showProgress">
@@ -122,24 +127,28 @@
           style="margin-top: 2rem; margin-bottom: 2rem"
         />
 
-        <div class="comments-section">
-          <h4 class="title is-4 has-text-grey-light">Comentarios</h4>
-          <div class="comment media"  v-for="comment in this.comentarios" :key="comment._id">
+        <div class="comments-section box has-background-grey">
+          <h4 class="title is-3 has-text-grey-light">Comentarios</h4>
+          <div class="comment media" v-for="comment in this.comentarios" :key="comment._id">
             <div class="media-content">
               <div class="content">
-                <p>
-                  <strong class="has-text-white title is-4">{{ comment.usuario }} </strong> <small class=""> {{ comment.fechaPublicacion }}</small>
-                  
+                <p class="has-text-white">
+                  <strong class="title is-4 has-text-grey-lighter">{{ comment.usuario }}</strong> <small class="has-text-grey-light">{{ comment.fechaPublicacion }}</small>
+        
+                  <br />
+                  <span v-for="star in 5" :key="star" class="icon has-text-dark">
+                    <i class="fas fa-star" :class="{ 'has-text-warning': star <= comment.valoracion }"></i>
+                  </span>
                   <br /><br />
                   {{ comment.contenido }}
                 </p>
               </div>
-
+        
               <nav class="level is-mobile">
                 <div class="level-left">
                   <a class="level-item">
                   </a>
-
+        
                   <a class="level-item">
                     <span class="icon is-small"><i class="fas fa-heart"></i></span>
                   </a>
@@ -147,39 +156,32 @@
               </nav>
             </div>
           </div>
-                    <form class="comment-form" @submit.prevent="submitComment()">
+          <form class="comment-form" @submit.prevent="submitComment()">
             <div class="field">
               <label class="label has-text-white">Nuevo comentario:</label>
               <div class="control">
-                <textarea
-                  class="textarea"
-                  v-model="newComment.contenido"
-                  required
-                ></textarea>
+                <textarea class="textarea" v-model="newComment.contenido" required></textarea>
               </div>
             </div>
             <div class="field">
               <label class="label has-text-white">Valoración:</label>
               <div class="control">
                 <div class="select">
-                  <select v-model="newComment.valoracion" required>
+                  <select class="select" v-model="newComment.valoracion" required>
                     <option disabled value="">Seleccione una valoración</option>
-                    <option v-for="rating in 5" :key="rating" :value="rating">
-                      {{ rating }}
-                    </option>
+                    <option v-for="rating in 5" :key="rating" :value="rating">{{ rating }}</option>
                   </select>
                 </div>
               </div>
             </div>
             <div class="field">
               <div class="control">
-                <button type="submit" class="button is-primary">
-                  Enviar comentario
-                </button>
+                <button type="submit" class="button is-primary">Enviar comentario</button>
               </div>
             </div>
           </form>
         </div>
+        
       </section>
       <footer class="modal-card-foot has-background-black-ter"></footer>
     </div>
@@ -314,6 +316,17 @@ export default {
           console.error(error);
         });
     },
+
+    getAverageRating(comentarios) {
+    if (comentarios.length === 0) {
+      return 0; // Si no hay comentarios, la valoración promedio es 0
+    }
+
+    const totalValoraciones = comentarios.reduce((total, comment) => total + comment.valoracion, 0);
+    const averageRating = totalValoraciones / comentarios.length;
+
+    return Math.round(averageRating); // Redondear la media al número entero más cercano
+  }
   },
 };
 </script>
@@ -428,6 +441,10 @@ export default {
   line-height: 1.5rem;
 }
 
+.comments-section {
+  border: 1px white solid
+}
+
 @media screen and (max-width: 900px) {
   .modal-card {
     width: 100%;
@@ -444,4 +461,5 @@ export default {
     display: none;
   }
 }
+
 </style>
