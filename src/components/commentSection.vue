@@ -1,12 +1,24 @@
 <template>
   <div class="comments-section box has-background-grey-dark" v-if="comentarios">
+    <div class="level">
     <h4 class="title is-3 has-text-grey-light">Comentarios</h4>
+    <div class="field">
+      <label class="label has-text-white">Ordenar por:</label>
+      <div class="control">
+        <div class="select">
+          <select v-model="sortBy">
+            <option value="">Ningun filtro</option>
+            <option value="dateAsc">Más antiguos primero</option>
+            <option value="dateDesc">Más nuevos primero</option>
+            <option value="likesAsc">Comentarios menos gustados</option>
+            <option value="likesDesc">Comentarios más gustados</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
     <hr/>
-    <div
-      class="comment media"
-      v-for="comment in comentarios"
-      :key="comment._id"
-    >
+    <div class="comment media" v-for="comment in comentariosSorted" :key="comment._id">
       <div class="media-content" style="padding: 15px">
         <div class="content">
           <p class="has-text-white">
@@ -122,6 +134,7 @@ export default {
   data() {
     return {
       comentarios: [],
+      sortBy: '',
       newComment: {
         contenido: "",
         valoracion: "Seleccione una valoración",
@@ -131,6 +144,24 @@ export default {
   mounted() {
     this.getComentarios();
   },
+  computed: {
+  comentariosSorted() {
+    const comentariosCopy = [...this.comentarios]; // Copia del array original
+    return comentariosCopy.sort((a, b) => {
+      if (this.sortBy === "dateAsc") {
+        return new Date(a.fechaPublicacion) - new Date(b.fechaPublicacion);
+      } else if (this.sortBy === "dateDesc") {
+        return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion);
+      } else if (this.sortBy === "likesAsc") {
+        return a.likes.length - b.likes.length;
+      } else if (this.sortBy === "likesDesc") {
+        return b.likes.length - a.likes.length;
+      } else {
+        return 0; // No sorting
+      }
+    });
+  },
+},
   methods: {
     getComentarios() {
       axios

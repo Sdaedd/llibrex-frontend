@@ -262,7 +262,7 @@ export default {
       modalCardHead.style.height = modalCardHead.style.height == '40px' ? 'initial' : '40px'
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -376,6 +376,7 @@ export default {
 }
 
 .maximized {
+  padding: 10px;
   max-width: 100%;
   max-height: 100%;
   width: 100% !important;
