@@ -6,7 +6,7 @@
         <p class="modal-card-title has-text-light">{{ book.title }}</p>
         <button class="delete" aria-label="close" @click="closePopup"></button>
       </header>
-      <section class="modal-card-body has-background-grey-dark">
+      <section class="modal-card-body has-background-grey-darker">
         <div class="media">
           <div class="media-left">
             <figure class="image">
@@ -50,16 +50,25 @@
                     {{ book.pageCount === 0 ? "Desconocido" : book.pageCount }}
                   </p>
                   <p>
-                    <strong class="has-text-grey-light title is-5">Valoración:</strong>
-                    <span class="comment-rating">
-                      <span v-for="star in 5" :key="star" class="icon has-text-dark">
-                        <i class="fas fa-star" :class="{
-                          'has-text-warning': star <= getAverageRating(comentarios),
-                        }"></i>
+                    <strong class="has-text-grey-light title is-5"
+                      >Valoración:</strong
+                    >
+                    <span class="comment-rating" v-if="this.valoraciones">
+                      <span
+                        v-for="star in 5"
+                        :key="star"
+                        class="icon has-text-black"
+                      >
+                        <i
+                          class="fas fa-star"
+                          :class="{
+                            'has-text-warning': star <= this.getAverageRating(),
+                          }"
+                        ></i>
                       </span>
-                      ({{comentarios.length}})
+                      ({{ this.valoraciones.length }})
                     </span>
-                  </p>                  
+                  </p>
                 </div>
               </div>
               <span v-if="showProgress">
@@ -126,62 +135,12 @@
           class="has-background-grey-light"
           style="margin-top: 2rem; margin-bottom: 2rem"
         />
-
-        <div class="comments-section box has-background-grey">
-          <h4 class="title is-3 has-text-grey-light">Comentarios</h4>
-          <div class="comment media" v-for="comment in this.comentarios" :key="comment._id">
-            <div class="media-content">
-              <div class="content">
-                <p class="has-text-white">
-                  <strong class="title is-4 has-text-grey-lighter">{{ comment.usuario }}</strong> <small class="has-text-grey-light">{{ comment.fechaPublicacion }}</small>
-        
-                  <br />
-                  <span v-for="star in 5" :key="star" class="icon has-text-dark">
-                    <i class="fas fa-star" :class="{ 'has-text-warning': star <= comment.valoracion }"></i>
-                  </span>
-                  <br /><br />
-                  {{ comment.contenido }}
-                </p>
-              </div>
-        
-              <nav class="level is-mobile">
-                <div class="level-left">
-                  <a class="level-item">
-                  </a>
-        
-                  <a class="level-item">
-                    <span class="icon is-small"><i class="fas fa-heart"></i></span>
-                  </a>
-                </div>
-              </nav>
-            </div>
-          </div>
-          <form class="comment-form" @submit.prevent="submitComment()">
-            <div class="field">
-              <label class="label has-text-white">Nuevo comentario:</label>
-              <div class="control">
-                <textarea class="textarea" v-model="newComment.contenido" required></textarea>
-              </div>
-            </div>
-            <div class="field">
-              <label class="label has-text-white">Valoración:</label>
-              <div class="control">
-                <div class="select">
-                  <select class="select" v-model="newComment.valoracion" required>
-                    <option disabled value="">Seleccione una valoración</option>
-                    <option v-for="rating in 5" :key="rating" :value="rating">{{ rating }}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="field">
-              <div class="control">
-                <button type="submit" class="button is-primary">Enviar comentario</button>
-              </div>
-            </div>
-          </form>
-        </div>
-        
+        <commentSection
+          v-if="usuario"
+          :usuario="this.usuario"
+          :libroId="book._id"
+          @valoraciones="handleValoraciones"
+        />
       </section>
       <footer class="modal-card-foot has-background-black-ter"></footer>
     </div>
@@ -191,6 +150,7 @@
 <script>
 import { mapMutations } from "vuex";
 import axios from "axios";
+import commentSection from "@/components/commentSection.vue";
 
 export default {
   props: {
@@ -202,16 +162,18 @@ export default {
       type: Boolean,
       default: true,
     },
+    getValoraciones: {
+      type: Number,
+    },
+  },
+  components: {
+    commentSection,
   },
   data() {
     return {
       usuario: [],
-      comentarios: [],
       showFullDescription: false,
-      newComment: {
-        contenido: "",
-        valoracion: null,
-      },
+      valoraciones: [], // Almacenar las valoraciones de los comentarios recibidos
     };
   },
   computed: {
@@ -227,7 +189,6 @@ export default {
   },
   mounted() {
     this.getUsuario();
-    this.getComentarios();
   },
   methods: {
     ...mapMutations(["setSelectedBook"]),
@@ -242,34 +203,6 @@ export default {
         .catch((error) => {
           this.error = error.message;
           console.error(error);
-        });
-    },
-
-    getComentarios() {
-      const libroId = this.book._id;
-
-      axios
-        .get(`http://localhost:3000/libros/${libroId}/comentarios`)
-        .then((response) => {
-          const comments = response.data;
-          const commentsIds = comments.map((comment) => comment.comment);
-
-          axios
-            .get("http://localhost:3000/comentarios")
-            .then((response) => {
-              this.comentarios = response.data
-                .filter((comment) => commentsIds.includes(comment._id))
-                .map((comment) => ({
-                  ...comment,
-                }));
-              console.log(this.comentarios);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
 
@@ -294,39 +227,22 @@ export default {
           console.error(error);
         });
     },
-    submitComment() {
-      const commentData = {
-        contenido: this.newComment.contenido,
-        valoracion: this.newComment.valoracion,
-        fechaPublicacion: new Date().toISOString(),
-        usuario: this.usuario.nombre,
-        libro: this.book._id,
-      };
-      axios
-        .post(
-          `http://localhost:3000/libros/${this.book._id}/comentarios`,
-          commentData
-        )
-        .then(() => {
-          /* this.book.comments.push(response.data); */
-          this.newComment.contenido = "";
-          this.newComment.valoracion = null;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    getAverageRating() {
+      if (this.valoraciones.length === 0) {
+        return 0; // Si no hay comentarios, la valoración promedio es 0
+      }
+
+      const totalValoraciones = this.valoraciones.reduce(
+        (total, valoracion) => total + valoracion,
+        0
+      );
+      const averageRating = totalValoraciones / this.valoraciones.length;
+
+      return Math.round(averageRating); // Redondear la media al número entero más cercano
     },
-
-    getAverageRating(comentarios) {
-    if (comentarios.length === 0) {
-      return 0; // Si no hay comentarios, la valoración promedio es 0
-    }
-
-    const totalValoraciones = comentarios.reduce((total, comment) => total + comment.valoracion, 0);
-    const averageRating = totalValoraciones / comentarios.length;
-
-    return Math.round(averageRating); // Redondear la media al número entero más cercano
-  }
+    handleValoraciones(valoraciones) {
+      this.valoraciones = valoraciones;
+    },
   },
 };
 </script>
@@ -441,10 +357,6 @@ export default {
   line-height: 1.5rem;
 }
 
-.comments-section {
-  border: 1px white solid
-}
-
 @media screen and (max-width: 900px) {
   .modal-card {
     width: 100%;
@@ -460,6 +372,8 @@ export default {
   .media-left {
     display: none;
   }
+  .modal-card-head {
+    height: 40px;
+  }
 }
-
 </style>
