@@ -46,9 +46,7 @@
                 {{ "(" + comment.likes.length + ")" }}
               </span>
             </a>
-            <small class="has-text-grey-light">{{
-              comment.fechaPublicacion
-            }}</small>
+            <small class="has-text-grey-light">{{ formatDate(comment.fechaPublicacion) }}</small>
           </div>
           <div
             v-if="
@@ -197,7 +195,6 @@ export default {
     },
     likeComment(comment) {
       const userId = this.usuario._id;
-      console.log("userHasLike? " + this.userHasLike(comment));
       if (this.userHasLike(comment)) {
         // Remove like
         axios
@@ -225,9 +222,22 @@ export default {
     userHasLike(comment) {
       const userId = this.usuario._id;
       const likes = comment.likes.map((like) => like._id);
-      console.log(likes.includes(userId.toString()));
       return likes.includes(userId.toString());
     },
+    formatDate(date) {
+    const now = new Date();
+    const commentDate = new Date(date);
+
+    const diffInMilliseconds = now - commentDate;
+    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+
+    if (diffInHours < 24) {
+      return `Hace ${diffInHours} hora/s`;
+    } else {
+      const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+      return commentDate.toLocaleDateString('es-ES', options);
+    }
+  }
   },
 };
 </script>

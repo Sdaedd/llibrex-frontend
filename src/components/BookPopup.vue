@@ -4,12 +4,15 @@
     <div class="modal-card has-text-white">
       <header class="modal-card-head has-background-black-ter">
         <p class="modal-card-title has-text-light">{{ book.title }}</p>
+        <button class="maximize-button" @click="maximizePopup">
+          <i class="fas fa-expand"></i>
+        </button>
         <button class="delete" aria-label="close" @click="closePopup"></button>
       </header>
       <section class="modal-card-body has-background-grey-darker">
         <div class="media">
           <div class="media-left">
-            <figure class="image">
+            <figure class="image" :class="{'is-4by5': !showProgress}">
               <img :src="book.image" alt="Book Cover" />
             </figure>
           </div>
@@ -49,7 +52,7 @@
                     >
                     {{ book.pageCount === 0 ? "Desconocido" : book.pageCount }}
                   </p>
-                  <p>
+                  <p v-if="showProgress">
                     <strong class="has-text-grey-light title is-5"
                       >Valoración:</strong
                     >
@@ -107,6 +110,11 @@
           <p class="progress-value has-text-grey">{{ book.capituloActual }}%</p>
         </div>
 
+        <hr v-if="!showProgress"
+          class="has-background-grey-light"
+          style="margin-top: 2rem; margin-bottom: 2rem"
+        />
+
         <div class="description-wrapper">
           <p>
             <strong class="has-text-grey-light title is-3">Sinopsis:</strong>
@@ -131,12 +139,12 @@
             </button>
           </div>
         </div>
-        <hr
+        <hr v-if="showProgress"
           class="has-background-grey-light"
           style="margin-top: 2rem; margin-bottom: 2rem"
         />
         <commentSection
-          v-if="usuario"
+          v-if="usuario && showProgress"
           :usuario="this.usuario"
           :libroId="book._id"
           @valoraciones="handleValoraciones"
@@ -243,6 +251,16 @@ export default {
     handleValoraciones(valoraciones) {
       this.valoraciones = valoraciones;
     },
+    maximizePopup() {
+      const modalCard = document.querySelector('.modal-card');
+      modalCard.classList.toggle('maximized');
+
+      const modalCardFoot = document.querySelector('.modal-card-foot')
+      modalCardFoot.style.display = modalCardFoot.style.display == 'none' ? 'initial' : 'none';
+
+      const modalCardHead = document.querySelector('.modal-card-head')
+      modalCardHead.style.height = modalCardHead.style.height == '40px' ? 'initial' : '40px'
+    },
   },
 };
 </script>
@@ -290,7 +308,7 @@ export default {
   background-color: #363636;
 }
 
-.modal-card-body .media-left .image {
+.modal-card-body .media-left  {
   width: 178px;
   height: auto;
 }
@@ -355,6 +373,41 @@ export default {
 .progress.is-large + .progress-value {
   font-size: calc(1.5rem / 1.5);
   line-height: 1.5rem;
+}
+
+.maximized {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 9999 !important;
+}
+
+.modal-header-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.maximize-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.maximize-button:hover {
+  color: #ccc;
+}
+
+.fa-expand {
+  font-size: 1.2rem;
 }
 
 @media screen and (max-width: 900px) {

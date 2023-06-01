@@ -12,9 +12,9 @@
       <ColumnCards :libros="filteredLibros" @bookSelected="showBookPopup" />
       </div>
     </div>
-    <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" @libroBorrado="handleLibroBorrado" />  
   </div>
-  
+  <BookPopup :pagina="capituloActual" :book="selectedBook" v-if="selectedBook" @closePopup="selectedBook = null" @libroBorrado="handleLibroBorrado" />  
+
   <div v-if="filteredLibros.length == 0 || libros.length < 0" class="container" style="text-align: center">
     <br />
     <div class="notification is-warning is-light">
