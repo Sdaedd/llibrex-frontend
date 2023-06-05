@@ -83,8 +83,9 @@ export default {
       }
     },
     borrarLibro(libroId) {
+      const userId = localStorage.getItem('userId')
       axios
-        .delete(`http://localhost:3000/libros/${libroId}`)
+        .delete(`http://localhost:3000/usuarios/${userId}/libros/${libroId}`)
         .then(() => {
           // Eliminación exitosa, realizar acciones necesarias
           this.$emit('libroBorrado'); // Emitir evento para indicar que se borró el libro

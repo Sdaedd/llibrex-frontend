@@ -3,37 +3,22 @@
     <!-- Top menu -->
     <div class="menu">
       <div class="menu-item">
-      <a class="navbar-item" href="/">
-        <img src="../assets/logo.png" width="112" height="28">
-      </a>
-      <a class="navbar-item" href="/biblioteca">
-        <span class="icon is-large">
-          <i class="fas fa-book"></i>
-        </span>
-      </a>
-    </div>
+        <a class="navbar-item" href="/">
+          <img src="../assets/logo.png" width="112" height="28">
+        </a>
+        <a class="navbar-item" href="/biblioteca">
+          <span class="icon is-large">
+            <i class="fas fa-book"></i>
+          </span>
+        </a>
+        <a class="navbar-item" href="/biblioteca">
+        </a>
+      </div>
       <div class="menu-item">
         <span class="book-title">{{ book.title }}</span>
       </div>
       <div class="menu-item">
-        <div class="dropdown is-hoverable">
-          <div class="dropdown-trigger">
-            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-              <span>Capítulos</span>
-              <span class="icon is-small">
-                <i class="fas fa-angle-down" aria-hidden="true"></i>
-              </span>
-            </button>
-          </div>
-          <div class="dropdown-menu" id="dropdown-menu" role="menu">
-            <div class="dropdown-content is-scrollable">
-              <a class="dropdown-item" v-for="(chapter, index) in Object.keys(this.chapters)" :key="index"
-                @click="goToChapter(index)">
-                {{ chapter.split('.')[0] }}
-              </a>
-            </div>
-          </div>
-        </div>
+        <span class="current-page">{{ calculateProgressPercentage() }}</span>
       </div>
     </div>
     <!-- Divider of reader -->
@@ -42,17 +27,15 @@
     <div id="reader" ref="reader"></div>
     <!-- Progress bar -->
     <div class="progress-bar">
-      <progress class="progress is-dark is-large" :value="this.currentLocation" :max="this.totalLocations"></progress>
       <div class="page-navigation">
         <button class="button" @click="prevPage"><i class="fas fa-chevron-left"></i></button>
-        <div class="current-page">
-          <span>{{ currentLocation }}</span>
-          <span>/</span>
-          <span>{{ totalLocations }}</span>
-          <span class="progress-percentage">({{ progress }}%)</span>
+        <div class="progress-slider" @mousemove="showProgressMessage($event)">
+          <input type="range" class="slider" :value="currentLocation" :max="totalLocations" @input="goToLocation($event.target.value)">
+          <span class="progress-message" v-if="showingProgressMessage">{{ progressMessage }}</span>
         </div>
         <button class="button" @click="nextPage"><i class="fas fa-chevron-right"></i></button>
       </div>
+     
     </div>
   </div>
 </template>
@@ -74,7 +57,8 @@ export default {
       currentLocation: null,
       totalLocations: null,
       epubCfi: null,
-      chapters: [],
+      showingProgressMessage: false,
+      progressMessage: '',
     };
   },
   computed: {
@@ -140,8 +124,6 @@ export default {
             height: 'calc(100% - 2em)',
           });
 
-          this.rendition.themes.default({ "p": { "font-size": "large !important" } })
-
           // Obtener las ubicaciones del libro
           book.ready.then(() => {
             this.totalLocations = book.locations.spine.length - 1;
@@ -153,11 +135,7 @@ export default {
             localStorage.setItem('currentLocation', location.start.cfi);
             localStorage.setItem('currentProgress', this.progress);
             this.chapters = this.rendition.book.locations.spine.manifest;
-            
-            console.log(this.chapters)
           });
-          // Enable navigation using arrow keys
-          window.addEventListener('keydown', this.handleKeyDown);
 
           // Verificar si el CFI es válido antes de mostrarlo
           if (this.epubCfi == null) {
@@ -165,23 +143,10 @@ export default {
           } else {
             this.rendition.display(this.epubCfi);
           }
-
         })
         .catch((error) => {
           console.log(error);
         });
-    },
-    handleKeyDown(event) {
-      // Handle arrow key navigation
-      const arrowKeys = ['ArrowLeft', 'ArrowRight'];
-      if (arrowKeys.includes(event.key)) {
-        event.preventDefault();
-        if (event.key === 'ArrowLeft') {
-          this.rendition.prev();
-        } else if (event.key === 'ArrowRight') {
-          this.rendition.next();
-        }
-      }
     },
     prevPage() {
       this.rendition.prev();
@@ -189,8 +154,7 @@ export default {
     nextPage() {
       this.rendition.next();
     },
-    goToChapter(chapter) {
-      const location = chapter;
+    goToLocation(location) {
       this.rendition.display(location);
     },
     closeWindow() {
@@ -201,8 +165,22 @@ export default {
       if (this.rendition) {
         this.rendition.destroy();
         this.rendition = null;
-        window.removeEventListener('keydown', this.handleKeyDown);
       }
+    },
+    showProgressMessage(event) {
+      const progressBar = event.currentTarget;
+      const rect = progressBar.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const percentage = Math.floor((mouseX / rect.width) * 100);
+      this.progressMessage = `${percentage}%`;
+      this.showingProgressMessage = true;
+    },
+    calculateProgressPercentage() {
+      if (this.totalLocations !== null && this.currentLocation !== null) {
+        const percentage = Math.floor((this.currentLocation / this.totalLocations) * 100);
+        return `${percentage}%`;
+      }
+      return '';
     },
   },
 };
@@ -260,37 +238,35 @@ export default {
   width: 100%;
 }
 
-.progress {
-  flex-grow: 1;
-  margin: auto;
-  margin-right: 10px;
-  width: 70%;
-}
-
-.progress-percentage {
-  margin-left: 5px;
-}
-
-.dropdown-content.is-scrollable {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.current-page {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
-
 .page-navigation {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin: 1px;
   flex-grow: 0;
+  width: 100%;
 }
 
 .button {
   margin-right: 5px;
+}
+
+.button-next {
+  margin-left: 5px;
+}
+
+.progress-slider {
+  flex-grow: 1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  max-width: 90%;
+}
+
+.slider {
+  width: 100%;
 }
 
 .divider {
@@ -302,7 +278,7 @@ export default {
   left: 50%;
   margin-left: -1px;
   top: 12.5%;
-  opacity: .15;
+  opacity: 0.15;
   box-shadow: -3px 0 15px rgba(0, 0, 0, 1);
   display: block;
 }
@@ -310,11 +286,28 @@ export default {
 .current-page {
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 22px;
 }
 
 .current-page span {
   margin-right: 5px;
+}
+
+.progress-message {
+  position: absolute;
+  top: -30px;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+
+.progress-bar:hover .progress-message {
+  opacity: 1;
 }
 
 @media only screen and (max-width: 1000px) {

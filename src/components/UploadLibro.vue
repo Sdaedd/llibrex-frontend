@@ -1,9 +1,9 @@
 <template>
   <div>
-    <form @submit.prevent="parseFile">
+    <form @submit.prevent="parseFiles">
       <div class="file has-name is-boxed">
         <label class="file-label">
-          <input class="file-input is-black" type="file" name="file" @change="handleFileUpload" />
+          <input class="file-input is-black" type="file" name="files" multiple @change="handleFileUpload" />
           <span class="file-cta has-background-dark">
             <span class="file-icon">
               <i class="fas fa-upload"></i>
@@ -11,17 +11,22 @@
             <span class="file-label has-text-white"> Elige un archivo... </span>
           </span>
           <span class="file-name has-text-white">
-            {{ file ? file.name : "No hay archivo seleccionado" }}
+            {{ files.length > 0 ? `${files.length} archivos seleccionados` : "No hay archivos seleccionados" }}
           </span>
         </label>
       </div>
-      <button v-if="!bookData" class="button is-black mt-3" type="submit" :disabled="!file">
-        Subir EPUB
+      <button v-if="!bookData" class="button is-black mt-3" type="submit" :disabled="files.length === 0">
+        Subir EPUB(s)
       </button>
       <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
     </form>
+    <div v-if="isUploading" class="notification is-primary has-text-centered has-background-grey-dark">
+      <progress class="progress is-small is-primary" max="100" :value="uploadProgress"></progress>
+      <p>Subiendo archivos... {{ uploadProgress.toFixed(0) }}%</p>
+    </div>
   </div>
 </template>
+
 
 <script>
 import ePub from "epubjs";
@@ -31,10 +36,12 @@ import router from "@/router";
 export default {
   data() {
     return {
-      file: null,
+      files: [],
       bookData: null,
       allowedExtensions: [".epub", ".pdf"], // Extensiones de archivo permitidas
       errorMessage: null, // Mensaje de error en caso de archivo no válido
+      isUploading: false, // Indica si se están subiendo los archivos
+      uploadProgress: 0, // Progreso de carga en porcentaje
     };
   },
   props: {
@@ -45,48 +52,55 @@ export default {
   },
   methods: {
     handleFileUpload(event) {
-      const selectedFile = event.target.files[0];
-      const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+      const selectedFiles = Array.from(event.target.files);
 
-      if (this.allowedExtensions.includes(`.${fileExtension}`)) {
-          this.file = selectedFile;
-          this.errorMessage = null; // Limpiar mensaje de error si el archivo es válido
+      // Filtrar los archivos seleccionados por extensión válida
+      this.files = selectedFiles.filter(file => {
+        const fileExtension = file.name.split(".").pop().toLowerCase();
+        return this.allowedExtensions.includes(`.${fileExtension}`);
+      });
+
+      if (this.files.length !== selectedFiles.length) {
+        this.errorMessage = "Algunos archivos no son válidos. Por favor, selecciona solo archivos EPUB o PDF.";
       } else {
-        this.file = null;
-        this.errorMessage =
-          "Archivo no válido. Por favor, selecciona un archivo EPUB.";
+        this.errorMessage = null; // Limpiar mensaje de error si todos los archivos son válidos
       }
     },
-    async parseFile() {
-      if (this.file) {
-        if (this.file.name.endsWith(".epub")) {
-          await this.parseEPUB();
-        } else if (this.file.name.endsWith(".pdf")) {
-          await this.parsePDF();
+    async parseFiles() {
+      if (this.files.length > 0) {
+        this.isUploading = true; // Iniciar la carga de archivos
+        for (let i = 0; i < this.files.length; i++) {
+          const file = this.files[i];
+          if (file.name.endsWith(".epub")) {
+            await this.parseEPUB(file);
+          } else if (file.name.endsWith(".pdf")) {
+            await this.parsePDF(file);
+          }
+          this.uploadProgress = ((i + 1) / this.files.length) * 100; // Actualizar el progreso de carga
         }
+        this.isUploading = false; // Finalizar la carga de archivos
+        this.uploadProgress = 0; // Reiniciar el progreso de carga
+        router.go(); // Redirigir después de cargar todos los archivos
       }
     },
-    async parseEPUB() {
+    async parseEPUB(file) {
       try {
-        const book = ePub(this.file);
+        const book = ePub(file);
         await book.ready;
         const metadata = book.package.metadata;
         let searchId = metadata.identifier.replace("urn:", "");
         if (!searchId.includes("isbn")) {
           searchId = metadata.title;
         }
-        await this.searchOnGoogleBooks(searchId);
+        await this.searchOnGoogleBooks(searchId, file);
       } catch (error) {
         console.error("Error al parsear el archivo EPUB:", error);
       }
     },
-    async parsePDF() {
+    async parsePDF(file) {
       try {
-        // Aquí puedes implementar la lógica para extraer la información necesaria del archivo PDF
-        // Puedes usar librerías como 'pdfjs-dist' para trabajar con archivos PDF en JavaScript
-        // Por simplicidad, en este ejemplo, solo se guarda el nombre del archivo
         this.bookData = {
-          title: this.file.name,
+          title: file.name,
           authors: [],
           description: "",
           image: "",
@@ -95,14 +109,14 @@ export default {
           publisher: "",
           categories: [],
           isbn: "",
-          pdf: null, // Set it to null initially
+          pdf: file, // Set it to the selected PDF file
         };
         this.saveBook();
       } catch (error) {
         console.error("Error al parsear el archivo PDF:", error);
       }
     },
-    async searchOnGoogleBooks(searchId) {
+    async searchOnGoogleBooks(searchId, file) {
       try {
         const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg"; // Reemplaza con tu clave de API de Google Books
         const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchId}&key=${apiKey}`;
@@ -124,7 +138,7 @@ export default {
             publisher: data.volumeInfo.publisher,
             categories: data.volumeInfo.categories,
             isbn: data.volumeInfo.industryIdentifiers[0].identifier,
-            epub: null, // Set it to null initially
+            epub: file, // Set it to the selected EPUB file
           };
           this.saveBook();
         } else {
@@ -135,84 +149,77 @@ export default {
       }
     },
     async saveBook() {
-  try {
-    const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
-    const libroExists = await this.checkISBNExists(this.bookData.isbn);
+      try {
+        const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
+        const libroExists = await this.checkISBNExists(this.bookData.isbn);
 
-    // Si el libro ya existe y el usuario ya lo tiene, no hacer nada
-    if (libroExists[0]) {
-      const libro = libroExists[1];
-      const libroId = libro[0]._id;
-      console.log('INCLUDES::')
-      console.log(this.user.progresoLibros.some(item => item.libro === libroId))
-      if (this.user.progresoLibros.some(item => item.libro === libroId)) {
-        
-        this.file = null
-        this.bookData = null
-        this.errorMessage = "Ya tiene el libro en su biblioteca."
-        return; // Salir de la función sin hacer nada más
-      }
-    }
-
-    // Si el libro ya existe, le guarda la ID del libro al usuario
-    if (libroExists[0]) {
-      const libro = libroExists[1];
-      const libroId = libro[0]._id;
-      const progresoLibrosData = {
-        libro: libroId,
-        capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
-      };
-
-      await axios.post(
-        `http://localhost:3000/usuarios/${userId}/libros`,
-        progresoLibrosData
-      );
-
-      console.log("Libro guardado correctamente");
-      router.go();
-    } else {
-      // El libro no existe, guardarlo y asignarlo al usuario
-      const formData = new FormData();
-      formData.append("epub", this.file); // Append the rest of the book data to FormData
-      formData.append("googleId", this.bookData.googleId);
-      formData.append("title", this.bookData.title);
-      formData.append("authors", this.bookData.authors);
-      formData.append("description", this.bookData.description);
-      formData.append("image", this.bookData.image);
-      formData.append("publicationDate", this.bookData.publicationDate);
-      formData.append("pageCount", this.bookData.pageCount);
-      formData.append("publisher", this.bookData.publisher);
-      formData.append("categories", this.bookData.categories);
-      formData.append("isbn", this.bookData.isbn);
-
-      const response = await axios.post(
-        `http://localhost:3000/libros`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // Establece el tipo de contenido correcto para FormData
-          },
+        // Si el libro ya existe y el usuario ya lo tiene, no hacer nada
+        if (libroExists[0]) {
+          const libro = libroExists[1];
+          const libroId = libro[0]._id;
+          if (this.user.progresoLibros.some(item => item.libro === libroId)) {
+            this.errorMessage = `El libro "${this.bookData.title}" ya está en tu biblioteca.`;
+            return; // Salir de la función sin hacer nada más
+          }
         }
-      );
 
-      const libroId = response.data._id; // Obtén el ID del libro guardado
-      const progresoLibrosData = {
-        libro: libroId,
-        capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
-      };
+        // Si el libro ya existe, le guarda la ID del libro al usuario
+        if (libroExists[0]) {
+          const libro = libroExists[1];
+          const libroId = libro[0]._id;
+          const progresoLibrosData = {
+            libro: libroId,
+            capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
+          };
 
-      await axios.post(
-        `http://localhost:3000/usuarios/${userId}/libros`,
-        progresoLibrosData
-      );
+          await axios.post(
+            `http://localhost:3000/usuarios/${userId}/libros`,
+            progresoLibrosData
+          );
 
-      console.log("Libro guardado correctamente:", response.data);
-      router.go();
-    }
-  } catch (error) {
-    console.error("Error al guardar el libro:", error);
-  }
-},
+          console.log("Libro guardado correctamente");
+        } else {
+          // El libro no existe, guardarlo y asignarlo al usuario
+          const formData = new FormData();
+          formData.append("epub", this.bookData.epub); // Append the EPUB file to FormData
+          formData.append("googleId", this.bookData.googleId);
+          formData.append("title", this.bookData.title);
+          formData.append("authors", this.bookData.authors);
+          formData.append("description", this.bookData.description);
+          formData.append("image", this.bookData.image);
+          formData.append("publicationDate", this.bookData.publicationDate);
+          formData.append("pageCount", this.bookData.pageCount);
+          formData.append("publisher", this.bookData.publisher);
+          formData.append("categories", this.bookData.categories);
+          formData.append("isbn", this.bookData.isbn);
+
+          const response = await axios.post(
+            `http://localhost:3000/libros`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data", // Establece el tipo de contenido correcto para FormData
+              },
+            }
+          );
+
+          const libroId = response.data._id; // Obtén el ID del libro guardado
+          const progresoLibrosData = {
+            libro: libroId,
+            capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
+          };
+
+          await axios.post(
+            `http://localhost:3000/usuarios/${userId}/libros`,
+            progresoLibrosData
+          );
+
+          console.log("Libro guardado correctamente:", response.data);
+        }
+      } catch (error) {
+        console.error("Error al guardar el libro:", error);
+      }
+    },
     async checkISBNExists(isbn) {
       try {
         console.log("isbn: " + isbn);
@@ -235,3 +242,32 @@ export default {
   },
 };
 </script>
+
+<style>
+.file-input {
+  display: none;
+}
+
+.file-cta {
+  border: 2px solid #dbdbdb;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.file-cta:hover {
+  background-color: #dbdbdb;
+}
+
+.file-cta.has-background-dark {
+  background-color: #363636;
+  color: #fff;
+}
+
+.file-cta.has-background-dark:hover {
+  background-color: #252525;
+}
+</style>

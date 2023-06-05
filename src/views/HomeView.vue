@@ -120,6 +120,7 @@ export default {
           localStorage.removeItem('currentProgress');
           localStorage.removeItem('currentBookId');
           localStorage.removeItem('currentLocation');
+          this.getLibros();
         })
         .catch(error => {
           console.error(error);

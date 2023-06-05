@@ -5,7 +5,7 @@
         <p class="title is-3 has-text-light">Biblioteca</p>
         <hr />
         <SliderCard :libros="libros" @bookSelected="showBookPopup" />
-        
+
         <br />
         <div v-if="librosLeidosRecientemente.length != 0">
             <hr />
@@ -25,7 +25,7 @@
     <div v-if="libros.length == 0" class="container" style="text-align: center">
         <br />
         <div class="notification is-warning is-light">
-          No hay libros que mostrar
+            No hay libros que mostrar
         </div>
     </div>
 </template>
@@ -78,6 +78,8 @@ export default {
 
         if (currentLocation != null || currentBookId != null) {
             this.saveCurrentLocation(currentLocation, currentBookId, currentBookProgress);
+        } else {
+            this.isLoaded = true;
         }
 
         this.getLibros();
