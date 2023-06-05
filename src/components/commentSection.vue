@@ -2,7 +2,7 @@
   <div class="comments-section box has-background-grey-dark" v-if="comentarios">
     <div class="level">
     <h4 class="title is-3 has-text-grey-light">Comentarios</h4>
-    <div class="field">
+    <div class="field" >
       <label class="label has-text-white">Ordenar por:</label>
       <div class="control">
         <div class="select">
@@ -17,7 +17,9 @@
       </div>
     </div>
   </div>
-    <hr/>
+  <p v-if="comentarios.length == 0" class="has-text-white">No existen comentarios</p>
+    <hr />
+   
     <div class="comment media" v-for="comment in comentariosSorted" :key="comment._id">
       <div class="media-content" style="padding: 15px">
         <div class="content">
@@ -74,8 +76,10 @@
           </div>
         </nav>
       </div>
+      
+     
     </div>
-  <hr/>
+    <hr v-if="comentarios.length != 0">
   <form class="comment-form" @submit.prevent="submitComment()">
     <div class="field">
       <label class="label has-text-white">Nuevo comentario:</label>
@@ -232,7 +236,10 @@ export default {
           .put(
             `http://localhost:3000/comentarios/${comment._id}/like/${userId}`
           )
-          .then(() => {})
+          .then(() => {
+            // Actualizar el estado del comentario después de eliminar el "Me gusta"
+            comment.likes = comment.likes.filter(like => like._id !== userId);
+          })
           .catch((error) => {
             console.error(error);
           });
@@ -242,13 +249,14 @@ export default {
           .put(
             `http://localhost:3000/comentarios/${comment._id}/like/${userId}`
           )
-          .then(() => {})
+          .then(() => {
+            // Actualizar el estado del comentario después de agregar el "Me gusta"
+            comment.likes.push({_id: userId});
+          })
           .catch((error) => {
             console.error(error);
           });
       }
-      this.getComentarios();
-      this.userHasLike(comment);
     },
     userHasLike(comment) {
       const userId = this.usuario._id;

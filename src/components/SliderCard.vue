@@ -5,7 +5,8 @@
         <div class="card has-background-black-ter has-text-white">
           <div class="card-image" @click="showBookPopup(libro)">
             <figure class="image is-4by3">
-              <img :src="libro.image" :alt="'Imagen de ' + libro.titulo">
+              <img v-if="libro.image != ''" :src="libro.image" :alt="'Imagen de ' + libro.title">
+              <img v-else src="../assets/no-cover.jpg" :alt="'Imagen de ' + libro.title">
               <div class="image-overlay"></div>
             </figure>
             <div v-if="showProgress" class="progress-wrapper">
@@ -23,7 +24,7 @@
             </div>
           </div>
           <div class="card-content">
-            <p class="subtitle is-7 has-text-grey">{{ formatAuthors(libro.authors) }}</p>
+            <p class="subtitle is-7 has-text-grey">{{ libro.authors ? formatAuthors(libro.authors) : 'Desconocido' }}</p>
           </div>
           <footer class="card-footer has-background-black-ter" v-if="showProgress">
             <button class="button is-primary is-outlined is-small card-footer-item" @click="leerLibro(libro)">

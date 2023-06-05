@@ -13,7 +13,8 @@
         <div class="media">
           <div class="media-left">
             <figure class="image" :class="{'is-4by5': !showProgress}">
-              <img :src="book.image" alt="Book Cover" />
+              <img v-if="book.image != ''" :src="book.image" alt="Book Cover" />
+              <img v-else src="../assets/no-cover.jpg" alt="Book Cover" />
             </figure>
           </div>
           <div class="media-content">
@@ -24,7 +25,7 @@
                     <strong class="has-text-grey-light title is-5"
                       >Autor/es:</strong
                     >
-                    {{ book.authors.join(", ") }}
+                    {{ book.authors === undefined ? 'deconocido' : book.authors.join(", ") }}
                   </p>
                   <p>
                     <strong class="has-text-grey-light title is-5"
@@ -36,7 +37,7 @@
                     <strong class="has-text-grey-light title is-5"
                       >Género:</strong
                     >
-                    {{ book.categories.slice(0, 3).join(", ") }}
+                    {{ book.categories === undefined ? 'undefined' : book.categories.slice(0, 3).join(", ") }}
                   </p>
                 </div>
                 <div class="column">
@@ -71,6 +72,12 @@
                       </span>
                       ({{ this.valoraciones.length }})
                     </span>
+                  </p>
+                  <p v-else>
+                    <strong class="has-text-grey-light title is-5">
+                      Más información:
+                    </strong>
+                    <a :href="book.link" class="button is-outlined is-primary">Link a Google Libros</a>
                   </p>
                 </div>
               </div>
@@ -120,7 +127,7 @@
             <strong class="has-text-grey-light title is-3">Sinopsis:</strong>
           </p>
           <div v-if="showFullDescription">
-            <p>{{ book.description }}</p>
+            <p>{{ book.description == undefined ? 'desconocido' : book.description}}</p>
             <button
               class="button is-small is-light is-outlined is-focused"
               @click="showFullDescription = false"
@@ -129,9 +136,9 @@
             </button>
           </div>
           <div v-else>
-            <p>{{ truncatedDescription }}</p>
+            <p>{{ book.description === undefined ?  'desconocido' : truncatedDescription }}</p>
             <button
-              v-if="book.description.length > 450"
+              v-if="book.description != undefined && book.description.length > 450"
               class="button is-light is-outlined"
               @click="showFullDescription = true"
             >

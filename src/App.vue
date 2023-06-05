@@ -9,7 +9,14 @@
 
 
 export default {
-  components: {
+  created() {
+    // Verificar si hay un usuario en el localStorage
+    const user = localStorage.getItem('userId');
+
+    // Si no hay un usuario o no es válido, redirigir a la página de inicio de sesión
+    if (!user) {
+      this.$router.push('/login');
+    }
   }
 }
 </script>

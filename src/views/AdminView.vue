@@ -3,7 +3,7 @@
   <div class="tabs is-centered has-background-warning">
     <ul>
       <li><a href="/cuenta">Panel de Usuario</a></li>
-      <li class="is-active"><a>Panel de administrador</a></li>
+      <li class="is-active has-text-black has-background-dark"><a>Panel de administrador</a></li>
     </ul>
   </div>
   <div>

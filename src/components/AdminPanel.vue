@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="panel">
-      <p class="panel-heading">Usuarios</p>
+      <p class="panel-heading">Panel de Usuarios</p>
       <div class="panel-block">
         <input class="input" v-model="busqueda" placeholder="Ingrese el nombre del usuario o acceso" />
       </div>
@@ -24,7 +24,7 @@
       <div class="modal-background" @click="mostrarPanelEdicion = false"></div>
       <div class="modal-content">
         <div class="box has-background-black-ter">
-          <div class="container">
+          <div class="container border">
             <h3 class="title is-4 has-text-white">Editar Usuario</h3>
             <div class="field">
               <label class="label has-text-white">Nombre de usuario</label>
@@ -181,7 +181,10 @@ export default {
 <style scoped>
 .container {
   padding: 20px;
-  max-width: 100%;
+  max-width: 90%;
+}
+.container.border {
+  margin: 20px;
 }
 
 .panel {
@@ -192,8 +195,8 @@ export default {
 }
 
 .panel-heading {
-  background-color: hsl(0, 0%, 71%);
-  color: #fff;
+  background-color: rgb(240, 227, 157) ;
+  color: black;
   font-size: 1.5rem;
   padding: 1rem;
 }
@@ -202,6 +205,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-color: rgb(240, 227, 157);
 }
 
 .user-id {
@@ -250,15 +254,21 @@ export default {
   right: 10px;
 }
 
+.border {
+  border: rgb(240, 227, 157) solid 1px;
+  border-radius: 20px;
+}
+
 @media screen and (max-width: 1000px) {
   .modal-content {
     max-height: 100%;
   }
 }
 
-input {
+input, select {
   color: gainsboro;
   background-color: transparent;
+  border: rgb(240, 227, 157) solid 1px
 }
 
 input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

@@ -2,9 +2,9 @@
   <div>
     <NavBar />
     <div v-if="usuario && libros" >
-      <div class="tabs is-centered has-background-primary">
+      <div class="tabs is-centered has-background-info">
         <ul>
-          <li class="is-active"><a>Panel de Usuario</a></li>
+          <li class="is-active has-text-black has-background-dark"><a>Panel de Usuario</a></li>
           <li v-if="usuario.acceso === 'admin'"><a href="/admin">Panel de administrador</a></li>
         </ul>
       </div>

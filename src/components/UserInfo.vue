@@ -103,9 +103,9 @@ export default {
   max-width: 600px;
   margin: 2em auto;
   border-radius: 20px;
-  border: gray 1px solid;
+  border: rgb(101, 154, 193) 1px solid;
   padding: 15px;
-  box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.149);
+  box-shadow: 0px 0px 10px 1px rgba(0, 225, 255, 0.355);
 }
 
 .user-info::before {

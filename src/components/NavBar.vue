@@ -37,7 +37,7 @@
 
             <div class="navbar-dropdown has-background-black-ter">
               <div class="navbar-item">
-                <upload-libro></upload-libro> 
+                <upload-libro :user="user"></upload-libro> 
               </div>
             </div>
           </div>
@@ -82,6 +82,7 @@ export default {
   },
   data() {
     return {
+      user: null,
       userAcceso: null,
       isNavbarActive: false, // Variable para controlar el estado del navbar
       isDropdownOpen: false, // Variable para controlar el estado del dropdown
@@ -95,7 +96,9 @@ export default {
       const userId = localStorage.getItem('userId');
       axios.get(`http://localhost:3000/usuarios/${userId}`)
         .then(response => {
+          this.user = response.data
           this.userAcceso = response.data.acceso
+          console.log(this.user)
         })
         .catch(error => {
           this.error = error.message;
