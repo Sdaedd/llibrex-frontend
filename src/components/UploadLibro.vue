@@ -18,7 +18,10 @@
       <button v-if="!bookData" class="button is-black mt-3" type="submit" :disabled="files.length === 0">
         Subir EPUB(s)
       </button>
-      <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
+      <div>
+        <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
+        <p v-if="successMessage" class="help is-success">{{ successMessage }}</p>
+      </div>
     </form>
     <div v-if="isUploading" class="notification is-primary has-text-centered has-background-grey-dark">
       <progress class="progress is-small is-primary" max="100" :value="uploadProgress"></progress>
@@ -40,6 +43,7 @@ export default {
       bookData: null,
       allowedExtensions: [".epub", ".pdf"], // Extensiones de archivo permitidas
       errorMessage: null, // Mensaje de error en caso de archivo no válido
+      successMessage: null, // Mensaje de éxito en caso de subida exitosa
       isUploading: false, // Indica si se están subiendo los archivos
       uploadProgress: 0, // Progreso de carga en porcentaje
     };
@@ -76,14 +80,18 @@ export default {
           } else if (file.name.endsWith(".pdf")) {
             await this.parsePDF(file);
           }
-          this.uploadProgress = ((i+1) / this.files.length) * 100; // Actualizar el progreso de carga
+          this.uploadProgress = ((i + 1) / this.files.length) * 100; // Actualizar el progreso de carga
         }
       }
     },
     async parseEPUB(file) {
       try {
         const book = ePub(file);
-        await book.ready;
+        const timeout = new Promise((resolve, reject) => {
+          setTimeout(() => reject(new Error("Tiempo de espera agotado")), 5000); // Establece un tiempo de espera de 5 segundos
+        });
+        await Promise.race([book.ready, timeout]); // Espera a que se complete la carga del libro o se cumpla el tiempo de espera
+
         const metadata = book.package.metadata;
         let searchId = metadata.identifier.replace("urn:", "");
         if (!searchId.includes("isbn")) {
@@ -91,9 +99,13 @@ export default {
         }
         await this.searchOnGoogleBooks(searchId, file);
       } catch (error) {
-        console.error("Error al parsear el archivo EPUB:", error);
+        this.files = []
+        this.isUploading = false,
+          this.uploadProgress = 0,
+          this.errorMessage = "Error al parsear el archivo EPUB";
       }
     },
+
     async parsePDF(file) {
       try {
         this.bookData = {
@@ -158,6 +170,7 @@ export default {
           const libroId = libro[0]._id;
           if (this.user.progresoLibros.some(item => item.libro === libroId)) {
             this.errorMessage = `El libro "${this.bookData.title}" ya está en tu biblioteca.`;
+            await this.sleep(5000);
             this.finishUpload()
             return; // Salir de la función sin hacer nada más
           }
@@ -176,8 +189,9 @@ export default {
             `http://localhost:3000/usuarios/${userId}/libros`,
             progresoLibrosData
           );
+          this.successMessage = "Libro guardado correctamente";
+          await this.sleep(2000);
           this.finishUpload();
-          console.log("Libro guardado correctamente");
         } else {
           // El libro no existe, guardarlo y asignarlo al usuario
           const formData = new FormData();
@@ -208,13 +222,14 @@ export default {
             libro: libroId,
             capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
           };
-          
+
           await axios.post(
             `http://localhost:3000/usuarios/${userId}/libros`,
             progresoLibrosData
           );
-          this.finishUpload();          
-          console.log("Libro guardado correctamente:", response.data);
+          this.successMessage = "Libro guardado correctamente";
+          await this.sleep(2000);
+          this.finishUpload();
         }
       } catch (error) {
         console.error("Error al guardar el libro:", error);
@@ -240,13 +255,16 @@ export default {
       }
     },
     finishUpload() {
-      if(this.uploadProgress === 100) {
-            this.isUploading = false; // Finalizar la carga de archivos
-            this.uploadProgress = 0; // Reiniciar el progreso de carga
-            this.bookData = null
-            this.files = [];
-            router.go(); // Redirigir después de cargar todos los archivos
+      if (this.uploadProgress === 100) {
+        this.isUploading = false; // Finalizar la carga de archivos
+        this.uploadProgress = 0; // Reiniciar el progreso de carga
+        this.bookData = null
+        this.files = [];
+        router.go(); // Redirigir después de cargar todos los archivos
       }
+    },
+    sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
   },
 };
@@ -278,5 +296,9 @@ export default {
 
 .file-cta.has-background-dark:hover {
   background-color: #252525;
+}
+
+form {
+  max-width: 250px;
 }
 </style>
