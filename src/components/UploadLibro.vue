@@ -176,7 +176,7 @@ export default {
             `http://localhost:3000/usuarios/${userId}/libros`,
             progresoLibrosData
           );
-
+          this.finishUpload();
           console.log("Libro guardado correctamente");
         } else {
           // El libro no existe, guardarlo y asignarlo al usuario
@@ -243,6 +243,7 @@ export default {
       if(this.uploadProgress === 100) {
             this.isUploading = false; // Finalizar la carga de archivos
             this.uploadProgress = 0; // Reiniciar el progreso de carga
+            this.bookData = null
             this.files = [];
             router.go(); // Redirigir después de cargar todos los archivos
       }
