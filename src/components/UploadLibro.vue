@@ -76,11 +76,8 @@ export default {
           } else if (file.name.endsWith(".pdf")) {
             await this.parsePDF(file);
           }
-          this.uploadProgress = ((i + 1) / this.files.length) * 100; // Actualizar el progreso de carga
+          this.uploadProgress = ((i+1) / this.files.length) * 100; // Actualizar el progreso de carga
         }
-        this.isUploading = false; // Finalizar la carga de archivos
-        this.uploadProgress = 0; // Reiniciar el progreso de carga
-        router.go(); // Redirigir después de cargar todos los archivos
       }
     },
     async parseEPUB(file) {
@@ -152,6 +149,8 @@ export default {
       try {
         const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
         const libroExists = await this.checkISBNExists(this.bookData.isbn);
+        console.log("LIBRO EXISTS")
+        console.log(libroExists)
 
         // Si el libro ya existe y el usuario ya lo tiene, no hacer nada
         if (libroExists[0]) {
@@ -159,6 +158,7 @@ export default {
           const libroId = libro[0]._id;
           if (this.user.progresoLibros.some(item => item.libro === libroId)) {
             this.errorMessage = `El libro "${this.bookData.title}" ya está en tu biblioteca.`;
+            this.finishUpload()
             return; // Salir de la función sin hacer nada más
           }
         }
@@ -208,12 +208,12 @@ export default {
             libro: libroId,
             capituloActual: "0", // Capítulo por defecto cuando no se ha leído ningún capítulo aún
           };
-
+          
           await axios.post(
             `http://localhost:3000/usuarios/${userId}/libros`,
             progresoLibrosData
           );
-
+          this.finishUpload();          
           console.log("Libro guardado correctamente:", response.data);
         }
       } catch (error) {
@@ -236,9 +236,17 @@ export default {
         }
       } catch (error) {
         console.error("Error checking ISBN:", error);
-        return false; // Assume ISBN does not exist in case of an error
+        return [false]; // Assume ISBN does not exist in case of an error
       }
     },
+    finishUpload() {
+      if(this.uploadProgress === 100) {
+            this.isUploading = false; // Finalizar la carga de archivos
+            this.uploadProgress = 0; // Reiniciar el progreso de carga
+            this.files = [];
+            router.go(); // Redirigir después de cargar todos los archivos
+      }
+    }
   },
 };
 </script>
