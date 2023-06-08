@@ -1,37 +1,39 @@
 <template>
   <div class="wrapper">
-  <div class="login-container">
-    <h2 class="title">Registrate</h2>
-    <form @submit.prevent="submitForm">
-      <div class="field">
-        <label class="label" for="nombre">Nombre de usuario:</label>
-        <div class="control">
-          <input class="input" type="text" id="nombre" v-model="nombre" required>
-        </div>
-      </div>
-      <div class="field">
-        <label class="label" for="contraseña">Contraseña:</label>
-        <div class="control">
-          <input class="input" type="password" id="contraseña" v-model="contraseña" required>
-        </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <div class="buttons is-centered">
-            <button class="button is-primary is-outlined" type="submit">
-              <strong>Registrarse</strong>
-            </button>
-            <a class="button is-danger is-outlined" href="/login">Volver</a>
+    <div class="login-container">
+      <h2 class="title">Registrate</h2>
+      <form @submit.prevent="submitForm">
+        <div class="field">
+          <label class="label" for="nombre">Nombre de usuario:</label>
+          <div class="control">
+            <input class="input" type="text" id="nombre" v-model="nombre" required>
+            <p class="error" v-if="nombreError">{{ nombreError }}</p>
           </div>
         </div>
-      </div>
-    </form>
-    <div v-if="error">
-      <br/>
-      <p class="notification is-danger">{{ error }}</p>
-    </div>    
+        <div class="field">
+          <label class="label" for="contraseña">Contraseña:</label>
+          <div class="control">
+            <input class="input" type="password" id="contraseña" v-model="contraseña" required>
+            <p class="error" v-if="contraseñaError">{{ contraseñaError }}</p>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <div class="buttons is-centered">
+              <button class="button is-primary is-outlined" type="submit">
+                <strong>Registrarse</strong>
+              </button>
+              <a class="button is-danger is-outlined" href="/login">Volver</a>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div v-if="error">
+        <br/>
+        <p class="notification is-danger">{{ error }}</p>
+      </div>    
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -45,6 +47,20 @@ export default {
       error: '',
       success: false
     };
+  },
+  computed: {
+    nombreError() {
+      if (this.nombre.length < 4 && this.nombre.length > 0) {
+        return 'El nombre de usuario debe tener al menos 4 caracteres.';
+      }
+      return '';
+    },
+    contraseñaError() {
+      if (this.contraseña.length < 8 && this.contraseña.length > 0) {
+        return 'La contraseña debe tener al menos 8 caracteres.';
+      }
+      return '';
+    }
   },
   methods: {
     submitForm() {
@@ -99,12 +115,6 @@ export default {
     },
     verificarUsuarioExistente(nombreUsuario) {
       return new Promise((resolve, reject) => {
-        // Realizar la verificación de existencia de usuario en el frontend
-        // Hacer una solicitud al backend para verificar si el usuario ya existe
-        // por ejemplo, una llamada a la ruta GET '/usuarios' para obtener todos los usuarios
-        // y luego buscar si el nombre de usuario ya está presente en la lista de usuarios
-
-        // Ejemplo de código:
         axios
           .get('http://localhost:3000/usuarios')
           .then(response => {
@@ -121,16 +131,19 @@ export default {
             reject(error);
           });
       });
+    }
   }
-}
 };
 </script>
-<style scoped>.wrapper {
+
+<style scoped>
+.wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Asegura que el contenedor ocupe el 100% de la altura de la pantalla */
+  height: 100vh;
 }
+
 .login-container {
   max-width: 500px;
   width: 100%;
@@ -144,8 +157,8 @@ export default {
 
 .title {
   color: #48c774;
-  text-align: center; /* Centra el título horizontalmente */
-  margin-bottom: 20px; /* Agrega espacio inferior */
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .field label.label {
@@ -166,7 +179,11 @@ export default {
 .buttons.is-centered {
   padding-top: 8px;
 }
-/* Estilos para hacer el formulario responsive */
+
+.error {
+  color: #ff3860;
+}
+
 @media (max-width: 600px) {
   .wrapper {
     max-width: 100%;
@@ -175,7 +192,7 @@ export default {
   }
 
   .login-container {
-    padding:5px;
+    padding: 5px;
     max-width: 100%;
   }
 

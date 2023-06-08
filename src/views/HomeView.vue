@@ -2,9 +2,9 @@
   <NavBar />
   <div class="home">
     <div class="container" style="padding: 15px;">
-      <p class="title is-3 has-text-light">Best Sellers Mensuales</p>
+      <p class="title is-3 has-text-light">Libros Recomendados</p>
       <hr>
-      <SliderBestSellers />
+      <SliderRecomendados />
       <p class="title is-3 has-text-light">Tus libros</p>
       <hr>
       <div v-if="isLoaded && libros.length > 0">
@@ -30,7 +30,7 @@ import ColumnCards from '@/components/ColumnCards.vue';
 import BookPopup from '@/components/BookPopup.vue';
 import NavBar from '@/components/NavBar.vue';
 import BookSearch from '@/components/BookSearch.vue';
-import SliderBestSellers from '@/components/SliderBestSellers.vue';
+import SliderRecomendados from '@/components/SliderRecomendados.vue';
 
 export default {
   name: 'HomeView',
@@ -39,7 +39,7 @@ export default {
     BookPopup,
     NavBar,
     BookSearch,
-    SliderBestSellers,
+    SliderRecomendados,
   },
   data() {
     return {

@@ -270,7 +270,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .file-input {
   display: none;
 }

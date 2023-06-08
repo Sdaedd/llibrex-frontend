@@ -1,5 +1,5 @@
 <template>
-  <div v-if="book" class="epub-reader">
+  <div v-if="book" class="epub-reader" @keydown="handleKeyDown">
     <!-- Top menu -->
     <div class="menu">
       <div class="menu-item">
@@ -11,8 +11,7 @@
             <i class="fas fa-book"></i>
           </span>
         </a>
-        <a class="navbar-item" href="/biblioteca">
-        </a>
+        <a class="navbar-item" href="/biblioteca"></a>
       </div>
       <div class="menu-item">
         <span class="book-title">{{ book.title }}</span>
@@ -35,7 +34,6 @@
         </div>
         <button class="button" @click="nextPage"><i class="fas fa-chevron-right"></i></button>
       </div>
-     
     </div>
   </div>
 </template>
@@ -67,6 +65,7 @@ export default {
     },
   },
   mounted() {
+    document.addEventListener('keydown', this.handleKeyDown); // Agrega el listener para el evento 'keydown'
     const userId = localStorage.getItem('userId');
 
     if (this.book) {
@@ -82,7 +81,6 @@ export default {
       this.$router.push('/');
     }
   },
-
   beforeUnmount() {
     this.destroyRendition();
   },
@@ -156,6 +154,13 @@ export default {
     },
     goToLocation(location) {
       this.rendition.display(location);
+    },
+    handleKeyDown(event) {
+      if (event.key === 'ArrowLeft') {
+        this.prevPage();
+      } else if (event.key === 'ArrowRight') {
+        this.nextPage();
+      }
     },
     closeWindow() {
       this.destroyRendition();

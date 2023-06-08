@@ -31,22 +31,27 @@ const router = createRouter({
     {
       path: '/reader',
       name: 'ReaderView',
-      component: ReaderView
+      component: ReaderView,
+      meta: { requiresAuth: true }
+      
     },
     {
       path: '/biblioteca',
       name: 'BibliotecaView',
-      component: BibliotecaView
+      component: BibliotecaView,
+      meta: { requiresAuth: true } 
     },
     {
       path: '/cuenta',
       name: 'AccountView',
-      component: AccountView
+      component: AccountView,
+      meta: { requiresAuth: true } 
     },
     {
       path: '/admin',
       name: 'AdminView',
-      component: AdminView
+      component: AdminView,
+      meta: { requiresAuth: true } 
     },
     {
       path: "/:pathmatch(.*)*",

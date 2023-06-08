@@ -286,9 +286,9 @@ export default {
 
 .modal-card {
   width: 80%;
-  height: 80%;
-  max-width: 1000px;
-  max-height: 700px;
+  height: 85%;
+  max-width: 1200px;
+  max-height: 1200px;
   overflow-y: auto;
   border-radius: 8px;
 }
@@ -304,7 +304,7 @@ export default {
 
 .modal-card-body {
   padding-bottom: 5px !important;
-  padding: 1.5rem;
+  padding: 1.5rem 5%;
   font-size: large;
   overflow-y: scroll;
   scrollbar-width: thin;
@@ -383,7 +383,6 @@ export default {
 }
 
 .maximized {
-  padding: 10px;
   max-width: 100%;
   max-height: 100%;
   width: 100% !important;
@@ -393,7 +392,6 @@ export default {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  z-index: 9999 !important;
 }
 
 .modal-header-buttons {
@@ -431,7 +429,7 @@ export default {
   }
   .modal-card-foot,
   .media-left {
-    display: none;
+    display: none !important;
   }
   .modal-card-head {
     height: 40px;

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="userAcceso">
+  <div>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -21,13 +21,13 @@
             </span>
             Inicio
           </a>
-          <a class="navbar-item" href="/biblioteca" :class="{ 'is-active': isActive('/biblioteca') }">
+          <a  v-if="userAcceso" class="navbar-item" href="/biblioteca" :class="{ 'is-active': isActive('/biblioteca') }">
             <span class="icon is-large">
               <i class="fas fa-book"></i>
             </span>
             Biblioteca
           </a>
-          <div class="navbar-item has-dropdown" :class="{ 'is-active': isDropdownOpen }">
+          <div  v-if="userAcceso" class="navbar-item has-dropdown" :class="{ 'is-active': isDropdownOpen }">
             <a class="navbar-link"  @click="toggleDropdown">
               <span class="icon is-large">
                 <i class="fas fa-upload"></i>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="navbar-end">
-          <a class="navbar-item has-text-primary" href="/cuenta" :class="{ 'is-active': isActive('/cuenta') }">
+          <a v-if="userAcceso" class="navbar-item has-text-primary" href="/cuenta" :class="{ 'is-active': isActive('/cuenta') }">
             <span class="icon is-large">
               <i class="fas fa-user"></i>
             </span>

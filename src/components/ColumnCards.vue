@@ -1,6 +1,6 @@
 <template>
     <div class="columns is-mobile is-multiline is-fullheight">
-      <div class="column is-one-fifth" v-for="libro in libros" :key="libro.id">
+      <div class="column is-one-fifth-desktop is-one-third-tablet is-half-mobile" v-for="libro in libros" :key="libro.id">
         <div class="card has-background-black-ter has-text-white">
             <div class="card-image" @click="showBookPopup(libro)">
               <figure class="image is-4by3">
