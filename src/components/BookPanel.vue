@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     async downloadBook(libro) {
-      const downloadUrl = `http://localhost:3000/libros/descargar/${libro._id}`;
+      const downloadUrl = `${process.env.VUE_APP_API_BASE_URL}/libros/descargar/${libro._id}`;
 
       try {
         const response = await axios.get(downloadUrl, { responseType: 'blob' });
@@ -85,7 +85,7 @@ export default {
     borrarLibro(libroId) {
       const userId = localStorage.getItem('userId')
       axios
-        .delete(`http://localhost:3000/usuarios/${userId}/libros/${libroId}`)
+        .delete(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}/libros/${libroId}`)
         .then(() => {
           // Eliminación exitosa, realizar acciones necesarias
           this.$emit('libroBorrado'); // Emitir evento para indicar que se borró el libro

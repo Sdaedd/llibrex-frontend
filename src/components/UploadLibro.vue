@@ -129,7 +129,6 @@ export default {
       try {
         const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg"; // Reemplaza con tu clave de API de Google Books
         const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchId}&key=${apiKey}`;
-        console.log(searchUrl);
         const response = await axios.get(searchUrl);
 
         if (response.data.items && response.data.items.length > 0) {
@@ -151,18 +150,16 @@ export default {
           };
           this.saveBook();
         } else {
-          console.log("No se encontraron libros.");
+          this.errorMessage = "No se encontraron libros.";
         }
       } catch (error) {
-        console.error("Error retrieving book data:", error);
+        this.errorMessage = "Error recuperando la información del libro";
       }
     },
     async saveBook() {
       try {
         const userId = localStorage.getItem("userId"); // Obtener el ID del usuario del localStorage
         const libroExists = await this.checkISBNExists(this.bookData.isbn);
-        console.log("LIBRO EXISTS")
-        console.log(libroExists)
 
         // Si el libro ya existe y el usuario ya lo tiene, no hacer nada
         if (libroExists[0]) {
@@ -186,7 +183,7 @@ export default {
           };
 
           await axios.post(
-            `http://localhost:3000/usuarios/${userId}/libros`,
+            `${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}/libros`,
             progresoLibrosData
           );
           this.successMessage = "Libro guardado correctamente";
@@ -208,7 +205,7 @@ export default {
           formData.append("isbn", this.bookData.isbn);
 
           const response = await axios.post(
-            `http://localhost:3000/libros`,
+            `${process.env.VUE_APP_API_BASE_URL}/libros`,
             formData,
             {
               headers: {
@@ -224,7 +221,7 @@ export default {
           };
 
           await axios.post(
-            `http://localhost:3000/usuarios/${userId}/libros`,
+            `${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}/libros`,
             progresoLibrosData
           );
           this.successMessage = "Libro guardado correctamente";
@@ -232,14 +229,13 @@ export default {
           this.finishUpload();
         }
       } catch (error) {
-        console.error("Error al guardar el libro:", error);
+        this.errorMessage = "Error al guardar el libro:";
       }
     },
     async checkISBNExists(isbn) {
       try {
-        console.log("isbn: " + isbn);
         const response = await axios.get(
-          `http://localhost:3000/libros?isbn=${isbn}`
+          `${process.env.VUE_APP_API_BASE_URL}/libros?isbn=${isbn}`
         );
 
         if (response.data.length > 0) {

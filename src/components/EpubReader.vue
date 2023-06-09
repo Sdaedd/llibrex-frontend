@@ -88,7 +88,7 @@ export default {
     getUserLocation(userId, libroId) {
       return new Promise((resolve, reject) => {
         axios
-          .get(`http://localhost:3000/usuarios/${userId}`)
+          .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}`)
           .then((response) => {
             const progresoLibros = response.data.progresoLibros;
             const libro = progresoLibros.find((progreso) => progreso.libro === libroId);
@@ -96,8 +96,8 @@ export default {
               this.epubCfi = libro.epubCfi;
               resolve(); // Resuelve la promesa si se encuentra el libro
             } else {
-              console.log(`El libro con ID ${libroId} no fue encontrado en el progreso del usuario.`);
-              reject(`El libro con ID ${libroId} no fue encontrado en el progreso del usuario.`); // Rechaza la promesa si el libro no se encuentra
+              console.error(`El libro con ID ${libroId} no fue encontrado en el progreso del usuario.`);
+              reject(); // Rechaza la promesa si el libro no se encuentra
             }
           })
           .catch((error) => {
@@ -111,7 +111,7 @@ export default {
         return; // Salir del método si libro es nulo
       }
       axios
-        .get(`http://localhost:3000/libros/leer/${libro._id}`)
+        .get(`${process.env.VUE_APP_API_BASE_URL}/libros/leer/${libro._id}`)
         .then((response) => {
           const epubArray = new Uint8Array(response.data.epub);
           const book = Epub(epubArray.buffer);
@@ -315,13 +315,10 @@ export default {
   opacity: 1;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1060px) {
   .divider {
     display: none;
   }
 
-  .menu {
-    display: none;
-  }
 }
 </style>

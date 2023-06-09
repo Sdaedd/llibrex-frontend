@@ -29,9 +29,9 @@
         </div>
       </form>
       <div v-if="error">
-        <br/>
+        <br />
         <p class="notification is-danger">{{ error }}</p>
-      </div>    
+      </div>
     </div>
   </div>
 </template>
@@ -53,6 +53,11 @@ export default {
       if (this.nombre.length < 4 && this.nombre.length > 0) {
         return 'El nombre de usuario debe tener al menos 4 caracteres.';
       }
+
+      if (/^[0-9]/.test(this.nombre)) {
+        return 'El nombre de usuario no puede comenzar con un número.';
+      }
+
       return '';
     },
     contraseñaError() {
@@ -78,12 +83,12 @@ export default {
         .then(() => {
           // Enviar la solicitud de registro al backend
           const usuario = {
-            nombre: this.nombre.trim(),
+            nombre: this.nombre.trim().toLowerCase(),
             contraseña: this.contraseña
           };
 
           axios
-            .post('http://localhost:3000/usuarios', usuario, {
+            .post(`${process.env.VUE_APP_API_BASE_URL}/usuarios`, usuario, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -116,7 +121,7 @@ export default {
     verificarUsuarioExistente(nombreUsuario) {
       return new Promise((resolve, reject) => {
         axios
-          .get('http://localhost:3000/usuarios')
+          .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios`)
           .then(response => {
             const usuarios = response.data;
             const usuarioExistente = usuarios.find(usuario => usuario.nombre === nombreUsuario);

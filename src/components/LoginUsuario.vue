@@ -62,7 +62,7 @@ export default {
       };
 
       axios
-        .post('http://localhost:3000/usuarios/login', usuario, {
+        .post(`${process.env.VUE_APP_API_BASE_URL}/usuarios/login`, usuario, {
           headers: {
             'Content-Type': 'application/json'
           }

@@ -45,7 +45,7 @@ export default {
   methods: {
     getUsuario() {
       const userId = localStorage.getItem('userId');
-      axios.get(`http://localhost:3000/usuarios/${userId}`)
+      axios.get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}`)
         .then(response => {
           this.usuario = response.data;
           this.getLibros();
@@ -63,12 +63,12 @@ export default {
     getLibros() {
       const userId = localStorage.getItem('userId');
   
-      axios.get(`http://localhost:3000/usuarios/${userId}/libros`)
+      axios.get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}/libros`)
         .then(response => {
           const progresoLibros = response.data;
           const libroIds = progresoLibros.map(libro => libro.libro);
   
-          axios.get('http://localhost:3000/libros')
+          axios.get(`${process.env.VUE_APP_API_BASE_URL}/libros`)
             .then(response => {
               this.libros = response.data.filter(libro => libroIds.includes(libro._id));
               this.libros = this.libros.map(libro => ({
@@ -78,11 +78,11 @@ export default {
               }));
             })
             .catch(error => {
-              console.log(error);
+              this.error = error;
             });
         })
         .catch(error => {
-          console.log(error);
+          this.error = error;
         });
     },
   },

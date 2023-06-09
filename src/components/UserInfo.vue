@@ -73,7 +73,7 @@ export default {
     },
     async saveChanges() {
       try {
-        const response = await axios.put(`http://localhost:3000/usuarios/${this.editedUsuario._id}`, this.editedUsuario);
+        const response = await axios.put(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${this.editedUsuario._id}`, this.editedUsuario);
         const usuarioActualizado = response.data;
         this.editing = false;
         this.success = true; // Mostrar notificación de éxito

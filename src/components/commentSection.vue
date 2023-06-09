@@ -24,9 +24,9 @@
       <div class="media-content" style="padding: 15px" :class="{ 'has-background-dark white-border': usuario.nombre === comment.usuario }">
         <div class="content">
           <p class="has-text-white">
-            <strong class="title is-4 has-text-grey-lighter">{{
-              comment.usuario
-            }}</strong>
+            <strong class="title is-4 has-text-grey-lighter">
+              {{ comment.usuario.charAt(0).toUpperCase() + comment.usuario.slice(1).toLowerCase() }}
+            </strong>
             <br />
             <span v-for="star in 5" :key="star" class="icon has-text-black">
               <i class="fas fa-star" :class="{ 'has-text-warning': star <= comment.valoracion }"></i>
@@ -171,13 +171,13 @@ export default {
   methods: {
     getComentarios() {
       axios
-        .get(`http://localhost:3000/libros/${this.libroId}/comentarios`)
+        .get(`${process.env.VUE_APP_API_BASE_URL}/libros/${this.libroId}/comentarios`)
         .then((response) => {
           const comments = response.data;
           const commentsIds = comments.map((comment) => comment.comment);
 
           axios
-            .get("http://localhost:3000/comentarios")
+            .get(`${process.env.VUE_APP_API_BASE_URL}/comentarios`)
             .then((response) => {
               this.comentarios = response.data
                 .filter((comment) => commentsIds.includes(comment._id))
@@ -208,7 +208,7 @@ export default {
       };
       axios
         .post(
-          `http://localhost:3000/libros/${this.libroId}/comentarios`,
+          `${process.env.VUE_APP_API_BASE_URL}/libros/${this.libroId}/comentarios`,
           commentData
         )
         .then(() => {
@@ -222,7 +222,7 @@ export default {
     },
     deleteComment(commentId) {
       axios
-        .delete(`http://localhost:3000/comentarios/${commentId}`)
+        .delete(`${process.env.VUE_APP_API_BASE_URL}/comentarios/${commentId}`)
         .then(() => {
           this.getComentarios();
         })
@@ -236,7 +236,7 @@ export default {
         // Remove like
         axios
           .put(
-            `http://localhost:3000/comentarios/${comment._id}/like/${userId}`
+            `${process.env.VUE_APP_API_BASE_URL}/comentarios/${comment._id}/like/${userId}`
           )
           .then(() => {
             // Actualizar el estado del comentario después de eliminar el "Me gusta"
@@ -249,7 +249,7 @@ export default {
         // Add like
         axios
           .put(
-            `http://localhost:3000/comentarios/${comment._id}/like/${userId}`
+            `${process.env.VUE_APP_API_BASE_URL}/comentarios/${comment._id}/like/${userId}`
           )
           .then(() => {
             // Actualizar el estado del comentario después de agregar el "Me gusta"
@@ -288,7 +288,7 @@ export default {
     saveEditedComment(comment) {
       // Enviar la solicitud HTTP para actualizar el contenido del comentario en el servidor
       axios
-        .put(`http://localhost:3000/comentarios/${comment._id}`, { contenido: comment.editedContent })
+        .put(`${process.env.VUE_APP_API_BASE_URL}/comentarios/${comment._id}`, { contenido: comment.editedContent })
         .then(() => {
           // Actualizar el estado del comentario en el cliente
           comment.contenido = comment.editedContent;

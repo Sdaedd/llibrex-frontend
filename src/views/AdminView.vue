@@ -32,7 +32,7 @@ export default {
   methods: {
     obtenerUsuarios() {
       axios
-        .get('http://localhost:3000/usuarios')
+        .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios`)
         .then((response) => {
           this.usuarios = response.data;
         })
@@ -45,7 +45,7 @@ export default {
     const userId = localStorage.getItem('userId');
 
     axios
-      .get('http://localhost:3000/usuarios')
+      .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios`)
       .then((response) => {
         const usuarios = response.data;
         const usuarioActual = usuarios.find(usuario => usuario._id === userId);

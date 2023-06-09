@@ -95,7 +95,7 @@ export default {
   methods: {
     eliminarUsuario(usuarioId) {
       axios
-        .delete(`http://localhost:3000/usuarios/${usuarioId}`)
+        .delete(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${usuarioId}`)
         .then(() => {
           this.obtenerUsuarios();
         })
@@ -115,7 +115,7 @@ export default {
     },
     guardarUsuarioEditado() {
       axios
-        .put(`http://localhost:3000/usuarios/${this.usuarioEditado._id}`, this.usuarioEditado)
+        .put(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${this.usuarioEditado._id}`, this.usuarioEditado)
         .then(() => {
           this.mostrarPanelEdicion = false;
           this.obtenerUsuarios();
@@ -126,13 +126,13 @@ export default {
     },
     verLibros(usuarioId) {
       axios
-        .get(`http://localhost:3000/usuarios/${usuarioId}/libros`)
+        .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${usuarioId}/libros`)
         .then((response) => {
           const progresoLibros = response.data;
           const libroIds = progresoLibros.map((libro) => libro.libro);
 
           axios
-            .get('http://localhost:3000/libros')
+            .get(`${process.env.VUE_APP_API_BASE_URL}/libros`)
             .then((response) => {
               this.librosUsuario = response.data
                 .filter((libro) => libroIds.includes(libro._id))
@@ -143,11 +143,11 @@ export default {
                 }));
             })
             .catch((error) => {
-              console.log(error);
+              console.error(error);
             });
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     },
     handleLibroBorrado() {
@@ -155,7 +155,7 @@ export default {
     },
     obtenerUsuarios() {
       axios
-        .get('http://localhost:3000/usuarios')
+        .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios`)
         .then((response) => {
           this.usuariosFiltrados = response.data;
         })

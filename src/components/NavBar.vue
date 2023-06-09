@@ -48,7 +48,7 @@
             <span class="icon is-large">
               <i class="fas fa-user"></i>
             </span>
-            Cuenta
+            {{ this.user.nombre.charAt(0).toUpperCase() + this.user.nombre.slice(1).toLowerCase() }}
           </a>
           <a class="navbar-item has-text-warning" href="/admin"  v-if="userAcceso == 'admin'" :class="{ 'is-active': isActive('/admin') }">
             <span class="icon is-large">
@@ -94,11 +94,10 @@ export default {
   methods: {
     getUsuarioAcceso() {
       const userId = localStorage.getItem('userId');
-      axios.get(`http://localhost:3000/usuarios/${userId}`)
+      axios.get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}`)
         .then(response => {
           this.user = response.data
           this.userAcceso = response.data.acceso
-          console.log(this.user)
         })
         .catch(error => {
           this.error = error.message;

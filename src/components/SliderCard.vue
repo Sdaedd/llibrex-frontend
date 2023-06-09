@@ -120,7 +120,6 @@ export default {
 .card {
   position: relative;
   width: 230px;
-  height: 100%;
   flex-grow: 1;
 }
 

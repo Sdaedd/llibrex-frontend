@@ -85,8 +85,12 @@
   .card {
     position: relative;
     width: 230px;
-    height: 100%;
+    max-height: 100%;
     flex-grow: 1;
+  }
+  
+  .column {
+    max-height: 375px;
   }
   
   .content {

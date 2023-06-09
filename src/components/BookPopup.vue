@@ -12,7 +12,7 @@
       <section class="modal-card-body has-background-grey-darker">
         <div class="media">
           <div class="media-left">
-            <figure class="image" :class="{'is-4by5': !showProgress}">
+            <figure class="image" :class="{ 'is-4by5': !showProgress }">
               <img v-if="book.image != ''" :src="book.image" alt="Book Cover" />
               <img v-else src="../assets/no-cover.jpg" alt="Book Cover" />
             </figure>
@@ -22,53 +22,34 @@
               <div class="columns">
                 <div class="column">
                   <p>
-                    <strong class="has-text-grey-light title is-5"
-                      >Autor/es:</strong
-                    >
+                    <strong class="has-text-grey-light title is-5">Autor/es:</strong>
                     {{ book.authors === undefined ? 'deconocido' : book.authors.join(", ") }}
                   </p>
                   <p>
-                    <strong class="has-text-grey-light title is-5"
-                      >Editorial:</strong
-                    >
+                    <strong class="has-text-grey-light title is-5">Editorial:</strong>
                     {{ book.publisher }}
                   </p>
                   <p>
-                    <strong class="has-text-grey-light title is-5"
-                      >Género:</strong
-                    >
+                    <strong class="has-text-grey-light title is-5">Género:</strong>
                     {{ book.categories === undefined ? 'undefined' : book.categories.slice(0, 3).join(", ") }}
                   </p>
                 </div>
                 <div class="column">
                   <p>
-                    <strong class="has-text-grey-light title is-5"
-                      >ISBN:</strong
-                    >
+                    <strong class="has-text-grey-light title is-5">ISBN:</strong>
                     {{ book.isbn }}
                   </p>
                   <p>
-                    <strong class="has-text-grey-light title is-5"
-                      >Páginas:</strong
-                    >
+                    <strong class="has-text-grey-light title is-5">Páginas:</strong>
                     {{ book.pageCount === 0 ? "Desconocido" : book.pageCount }}
                   </p>
                   <p v-if="showProgress">
-                    <strong class="has-text-grey-light title is-5"
-                      >Valoración:</strong
-                    >
+                    <strong class="has-text-grey-light title is-5">Valoración:</strong>
                     <span class="comment-rating" v-if="this.valoraciones">
-                      <span
-                        v-for="star in 5"
-                        :key="star"
-                        class="icon has-text-black"
-                      >
-                        <i
-                          class="fas fa-star"
-                          :class="{
-                            'has-text-warning': star <= this.getAverageRating(),
-                          }"
-                        ></i>
+                      <span v-for="star in 5" :key="star" class="icon has-text-black">
+                        <i class="fas fa-star" :class="{
+                          'has-text-warning': star <= this.getAverageRating(),
+                        }"></i>
                       </span>
                       ({{ this.valoraciones.length }})
                     </span>
@@ -82,19 +63,13 @@
                 </div>
               </div>
               <span v-if="showProgress">
-                <button
-                  class="button is-primary is-outlined is-small"
-                  @click="leerLibro"
-                >
+                <button class="button is-primary is-outlined is-small" @click="leerLibro">
                   <span class="is-size-6">Leer</span>
                   <span class="icon is-small">
                     <i class="fas fa-book-open"></i>
                   </span>
                 </button>
-                <button
-                  class="button is-danger is-outlined is-small"
-                  @click="borrarLibro"
-                >
+                <button class="button is-danger is-outlined is-small" @click="borrarLibro">
                   <span class="is-size-6">Borrar</span>
                   <span class="icon is-small">
                     <i class="fas fa-times"></i>
@@ -105,57 +80,34 @@
           </div>
         </div>
         <br />
-        <div
-          v-if="showProgress"
-          class="level-item has-text-centered progress-container"
-        >
-          <progress
-            class="progress show-value is-large is-dark"
-            :value="book.capituloActual"
-            max="100"
-          ></progress>
+        <div v-if="showProgress" class="level-item has-text-centered progress-container">
+          <progress class="progress show-value is-large is-dark" :value="book.capituloActual" max="100"></progress>
           <p class="progress-value has-text-grey">{{ book.capituloActual }}%</p>
         </div>
 
-        <hr v-if="!showProgress"
-          class="has-background-grey-light"
-          style="margin-top: 2rem; margin-bottom: 2rem"
-        />
+        <hr v-if="!showProgress" class="has-background-grey-light" style="margin-top: 2rem; margin-bottom: 2rem" />
 
         <div class="description-wrapper">
           <p>
             <strong class="has-text-grey-light title is-3">Sinopsis:</strong>
           </p>
           <div v-if="showFullDescription">
-            <p>{{ book.description == undefined ? 'desconocido' : book.description}}</p>
-            <button
-              class="button is-small is-light is-outlined is-focused"
-              @click="showFullDescription = false"
-            >
+            <p>{{ book.description == undefined ? 'desconocido' : book.description }}</p>
+            <button class="button is-small is-light is-outlined is-focused" @click="showFullDescription = false">
               Mostrar menos
             </button>
           </div>
           <div v-else>
-            <p>{{ book.description === undefined ?  'desconocido' : truncatedDescription }}</p>
-            <button
-              v-if="book.description != undefined && book.description.length > 450"
-              class="button is-light is-outlined"
-              @click="showFullDescription = true"
-            >
+            <p>{{ book.description === undefined ? 'desconocido' : truncatedDescription }}</p>
+            <button v-if="book.description != undefined && book.description.length > 450"
+              class="button is-light is-outlined" @click="showFullDescription = true">
               Mostrar más
             </button>
           </div>
         </div>
-        <hr v-if="showProgress"
-          class="has-background-grey-light"
-          style="margin-top: 2rem; margin-bottom: 2rem"
-        />
-        <commentSection
-          v-if="usuario && showProgress"
-          :usuario="this.usuario"
-          :libroId="book._id"
-          @valoraciones="handleValoraciones"
-        />
+        <hr v-if="showProgress" class="has-background-grey-light" style="margin-top: 2rem; margin-bottom: 2rem" />
+        <commentSection v-if="usuario && showProgress" :usuario="this.usuario" :libroId="book._id"
+          @valoraciones="handleValoraciones" />
       </section>
       <footer class="modal-card-foot has-background-black-ter"></footer>
     </div>
@@ -211,7 +163,7 @@ export default {
     getUsuario() {
       const userId = localStorage.getItem("userId");
       axios
-        .get(`http://localhost:3000/usuarios/${userId}`)
+        .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}`)
         .then((response) => {
           this.usuario = response.data;
         })
@@ -233,7 +185,7 @@ export default {
       const libroId = this.book._id;
 
       axios
-        .delete(`http://localhost:3000/libros/${libroId}`)
+        .delete(`${process.env.VUE_APP_API_BASE_URL}/libros/${libroId}`)
         .then(() => {
           this.$emit("closePopup");
           this.$emit("libroBorrado");
@@ -315,7 +267,7 @@ export default {
   background-color: #363636;
 }
 
-.modal-card-body .media-left  {
+.modal-card-body .media-left {
   width: 178px;
   height: auto;
 }
@@ -367,17 +319,17 @@ export default {
   margin-top: 1rem;
 }
 
-.progress.is-small + .progress-value {
+.progress.is-small+.progress-value {
   font-size: calc(0.75rem / 1.5);
   line-height: 0.75rem;
 }
 
-.progress.is-medium + .progress-value {
+.progress.is-medium+.progress-value {
   font-size: calc(1.25rem / 1.5);
   line-height: 1.25rem;
 }
 
-.progress.is-large + .progress-value {
+.progress.is-large+.progress-value {
   font-size: calc(1.5rem / 1.5);
   line-height: 1.5rem;
 }
@@ -427,10 +379,12 @@ export default {
   .modal-card-body {
     font-size: medium;
   }
+
   .modal-card-foot,
   .media-left {
     display: none !important;
   }
+
   .modal-card-head {
     height: 40px;
   }

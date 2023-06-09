@@ -46,7 +46,6 @@
         const apiKey = 'AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg';
   
         let apiUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:${this.selectedGenre}&langRestrict=es&key=${apiKey}`;  
-        console.log(apiUrl)
         axios
           .get(apiUrl)
           .then((response) => {
@@ -73,7 +72,6 @@
           });
       },
       showBookPopup(book) {
-        console.log(book)
         this.selectedBook = book;
         this.showProgress = false;
       }

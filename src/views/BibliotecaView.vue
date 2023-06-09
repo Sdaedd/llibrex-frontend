@@ -98,7 +98,7 @@ export default {
             const userId = localStorage.getItem('userId');
             const libroId = currentBookId;
 
-            const url = `http://localhost:3000/usuarios/${userId}/libros/${libroId}`;
+            const url = `${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}/libros/${libroId}`;
             const data = {
                 capituloActual: currentBookProgress,
                 epubCfi: currentLocation,
@@ -122,13 +122,13 @@ export default {
             const userId = localStorage.getItem('userId');
 
             axios
-                .get(`http://localhost:3000/usuarios/${userId}/libros`)
+                .get(`${process.env.VUE_APP_API_BASE_URL}/usuarios/${userId}/libros`)
                 .then((response) => {
                     const progresoLibros = response.data;
                     const libroIds = progresoLibros.map((libro) => libro.libro);
 
                     axios
-                        .get('http://localhost:3000/libros')
+                        .get(`${process.env.VUE_APP_API_BASE_URL}/libros`)
                         .then((response) => {
                             this.libros = response.data
                                 .filter((libro) => libroIds.includes(libro._id))
@@ -143,11 +143,11 @@ export default {
                             this.isLoaded = true;
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.error(error);
                         });
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.error(error);
                 });
         },
 
