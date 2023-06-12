@@ -78,6 +78,12 @@ export default {
         return;
       }
 
+      // Verificar la longitud de la contraseña
+      if (this.contraseña.length < 8) {
+        this.error = 'La contraseña debe tener al menos 8 caracteres.';
+        return;
+      }
+
       // Verificar si el usuario ya existe antes de enviar la solicitud de registro
       this.verificarUsuarioExistente(this.nombre.trim())
         .then(() => {

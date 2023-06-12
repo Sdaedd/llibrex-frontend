@@ -127,7 +127,7 @@ export default {
     },
     async searchOnGoogleBooks(searchId, file) {
       try {
-        const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg"; // Reemplaza con tu clave de API de Google Books
+        const apiKey = "AIzaSyAeN5D4nw0cPLBVXnBrS7umspy2tHytSjg";
         const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchId}&key=${apiKey}`;
         const response = await axios.get(searchUrl);
 
@@ -146,7 +146,7 @@ export default {
             publisher: data.volumeInfo.publisher,
             categories: data.volumeInfo.categories,
             isbn: data.volumeInfo.industryIdentifiers[0].identifier,
-            epub: file, // Set it to the selected EPUB file
+            epub: file,
           };
           this.saveBook();
         } else {

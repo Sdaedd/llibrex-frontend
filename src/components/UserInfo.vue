@@ -80,7 +80,6 @@ export default {
         this.$emit('update:usuario', { ...usuarioActualizado });
       } catch (error) {
         console.error('Error al guardar los cambios del usuario:', error);
-        // Manejar el error de acuerdo a tus necesidades
       }
     },
     cancelEditing() {

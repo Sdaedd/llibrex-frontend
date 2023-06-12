@@ -78,7 +78,7 @@ import UploadLibro from "@/components/UploadLibro.vue";
 
 export default {
   components: {
-    UploadLibro, // Agregar el componente UploadLibro.vue como un componente importado
+    UploadLibro,
   },
   data() {
     return {
@@ -122,7 +122,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos personalizados para el componente NavBar.vue */
 
 .navbar-dropdown {
   padding: 0.5rem;

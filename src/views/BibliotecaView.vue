@@ -13,7 +13,7 @@
             <SliderCard :libros="librosLeidosRecientemente" @bookSelected="showBookPopup" />
         </div>
 
-        <!-- Loop through unique genres -->
+        <!-- recorre todos los generos unicos -->
         <div v-for="genre in uniqueGenres" :key="genre">
             <hr />
             <p class="title is-4 has-text-light">{{ genre }}</p>
@@ -107,14 +107,12 @@ export default {
             axios
                 .put(url, data)
                 .then(() => {
-                    // La solicitud fue exitosa
                     localStorage.removeItem('currentProgress');
                     localStorage.removeItem('currentBookId');
                     localStorage.removeItem('currentLocation');
                     this.getLibros();
                 })
                 .catch((error) => {
-                    // Se produjo un error al realizar la solicitud
                     console.error(error);
                 });
         },
