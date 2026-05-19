@@ -6,12 +6,12 @@ Además de funcionar como plataforma de lectura, Llibrex incorpora funcionalidad
 El proyecto también está planteado como una solución de código abierto, permitiendo que cualquier persona, grupo o institución pueda desplegar su propia instancia privada para gestionar su colección de libros, clubes de lectura o bibliotecas digitales.
 
 ## Características principales
-· Diseño totalmente responsive
-· Gestión y almacenamiento de libros
-· Lectura online desde múltiples dispositivos
-· Sistema de comentarios y valoraciones
-· Arquitectura orientada a despliegues privados
-· Proyecto open source y colaborativo
+* Diseño totalmente responsive
+* Gestión y almacenamiento de libros
+* Lectura online desde múltiples dispositivos
+* Sistema de comentarios y valoraciones
+* Arquitectura orientada a despliegues privados
+* Proyecto open source y colaborativo
 
 ## Objetivo del proyecto
 
