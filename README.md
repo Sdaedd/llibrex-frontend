@@ -1,38 +1,63 @@
 # llibrex-frontend
-Llibrex es una aplicación totalmente responsive diseñada para clubes de lectura y amantes de la lectura en general.
-Su objetivo principal es proporcionar una plataforma en línea donde los usuarios puedan almacenar y leer sus libros desde cualquier dispositivo.
+Llibrex es una aplicación web responsive orientada a clubes de lectura, bibliotecas y usuarios apasionados por la lectura digital. El proyecto busca ofrecer una experiencia moderna y accesible para almacenar, gestionar y leer libros desde cualquier dispositivo.
 
-También puede considerarse una pequeña red social, gracias a la inclusión de comentarios y valoraciones para compartirlas con otros lectores.
+Además de funcionar como plataforma de lectura, Llibrex incorpora funcionalidades sociales como comentarios y valoraciones, fomentando la interacción entre lectores y la creación de comunidades alrededor de los libros.
 
-Además, ofrecerá la opción de alojar tu propia aplicación para disponer de un repositorio privado para tu club de lectura o incluso para una biblioteca.
+El proyecto también está planteado como una solución de código abierto, permitiendo que cualquier persona, grupo o institución pueda desplegar su propia instancia privada para gestionar su colección de libros, clubes de lectura o bibliotecas digitales.
 
-La finalidad de este proyecto es proporcionar un servidor de libros de código abierto para que cualquier persona, grupo o institución, como una biblioteca, pueda utilizarlo y aportar nuevas ideas y funcionalidades al proyecto.
+## Características principales
+· Diseño totalmente responsive
+· Gestión y almacenamiento de libros
+· Lectura online desde múltiples dispositivos
+· Sistema de comentarios y valoraciones
+· Arquitectura orientada a despliegues privados
+· Proyecto open source y colaborativo
 
-Llibrex busca facilitar la experiencia de lectura en línea y fomentar la colaboración entre los amantes de los libros.
+## Objetivo del proyecto
 
-# Usuario de prueba:
-User: test
-Password: test
+La finalidad de Llibrex es facilitar el acceso a la lectura digital y proporcionar una plataforma flexible y extensible para comunidades lectoras. El proyecto está enfocado en la escalabilidad, la accesibilidad y la colaboración abierta.
 
-## Project setup
+## Tecnologías utilizadas
+Vue.js
+JavaScript
+HTML5
+CSS3
+Node.js
+npm
+
+# Demo:
+Usuario de prueba:
+```
+Usuario: test
+Contraseña: test
+```
+
+# Instalación del proyecto
+
+### Instalar dependencias
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Ejecutar en entorno de desarrollo
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compilar para producción
 ```
 npm run build
 ```
 
-### Lints and fixes files
+### Ejecutar análisis y corrección de estilo
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Configuración adicional
+
+Consulta la documentación oficial de Vue CLI para más información sobre configuración y despliegue (https://cli.vuejs.org/config/).
+
+## Estado del proyecto
+
+Proyecto personal en desarrollo enfocado en la creación de una plataforma de lectura digital moderna, escalable y orientada a comunidades.
