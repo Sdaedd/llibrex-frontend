@@ -18,12 +18,12 @@ El proyecto también está planteado como una solución de código abierto, perm
 La finalidad de Llibrex es facilitar el acceso a la lectura digital y proporcionar una plataforma flexible y extensible para comunidades lectoras. El proyecto está enfocado en la escalabilidad, la accesibilidad y la colaboración abierta.
 
 ## Tecnologías utilizadas
-Vue.js
-JavaScript
-HTML5
-CSS3
-Node.js
-npm
+* Vue.js
+* JavaScript
+* HTML5
+* CSS3
+* Node.js
+* npm
 
 # Demo:
 Usuario de prueba:
