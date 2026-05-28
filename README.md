@@ -24,6 +24,12 @@ La finalidad de Llibrex es facilitar el acceso a la lectura digital y proporcion
 * CSS3
 * Node.js
 * npm
+### Backend:
+* Express.js
+* MongoDB
+* Mongoose
+* Epub.js
+* Google Books API
 
 # Demo:
 Usuario de prueba:
